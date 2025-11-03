@@ -89,7 +89,7 @@ ostream& operator<<(ostream& sout, const Crop& crop) {
 
 //////////////////////////////////////////////////////////////
 Irrigator::Irrigator(int size){
-  
+  m_size = size;
 }
 Irrigator::~Irrigator(){
   
@@ -126,5 +126,12 @@ bool Irrigator::setStructure(STRUCTURE structure, int n){
   
 }
 bool Irrigator::getCrop(Crop & aCrop){
+  
+}
+
+/*
+Private helpers
+*/
+bool Irrigator::checkHeap(Region* root) {
   
 }

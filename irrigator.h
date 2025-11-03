@@ -162,7 +162,6 @@ class Region{
     /******************************************
      * Private function declarations go here! *
      ******************************************/
-
 };
 
 class Irrigator{
@@ -189,6 +188,10 @@ class Irrigator{
     /******************************************
      * Private function declarations go here! *
      ******************************************/
+    /*
+    Check whether heap satisfies heap condition or not
+    */
+    bool checkHeap(Region* root);
 
     void dump(int index);
 };
