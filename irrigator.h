@@ -163,7 +163,7 @@ class Region{
      * Private function declarations go here! *
      ******************************************/
 
-     bool checkHeap(Region* root);
+     bool checkHeap(Crop* root);
 
 };
 
