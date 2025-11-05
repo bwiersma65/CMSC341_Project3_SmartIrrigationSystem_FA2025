@@ -150,64 +150,6 @@ class Tester{
 
 // Calls test functions from Tester class
 int main(){
-    Random regionGen(10,30);
-    Random idGen(MINCROPID,MAXCROPID);
-    Random temperatureGen(MINTEMP,MAXTEMP);
-    int temperature = temperatureGen.getRandNum();
-    Random moistureGen(MINMOISTURE,MAXMOISTURE);
-    Random timeGen(MINTIME,MAXTIME);
-    int time = timeGen.getRandNum();
-    Random typeGen(MINTYPE,MAXTYPE);
-    Irrigator regionsQueue(20);
-    cout << "Creating 10 regions and adding them to the system:" << endl;
-    for (int j=0;j<10;j++){
-        int rndRegion = regionGen.getRandNum();
-        Region aRegion(priorityFn2, MINHEAP, LEFTIST, rndRegion);
-        for (int i=0;i<5;i++){
-            Crop aCrop(idGen.getRandNum(),
-                        temperature,// it is the same in the region
-                        moistureGen.getRandNum(),
-                        time,       // it is the same in the region
-                        typeGen.getRandNum());
-            aRegion.insertCrop(aCrop);
-        }
-        // cout << "Region Priority: " << rndRegion << endl;
-        aRegion.dump();
-        regionsQueue.addRegion(aRegion);
-    }
-
     
-    return 0;
 }
 
-int priorityFn1(const Crop &crop) {
-    //needs MAXHEAP
-    //priority value is determined based on some criteria
-    //priority value falls in the range [30-116]
-    //the highest priority would be 110+6 = 116
-    //the lowest priority would be 30+0 = 30
-    //the larger value means the higher priority
-    int minValue = 30;
-    int maxValue = 116;
-    int priority = crop.getTemperature() + crop.getType();
-    if (priority >= minValue && priority <= maxValue)
-        return priority;
-    else
-        return 0; // this is an invalid order object
-}
-
-int priorityFn2(const Crop &crop) {
-    //needs MINHEAP
-    //priority value is determined based on some criteria
-    //priority value falls in the range [1-103]
-    //the highest priority would be 1+0 = 1
-    //the lowest priority would be 100+3 = 103
-    //the smaller value means the higher priority
-    int minValue = 1;
-    int maxValue = 103;
-    int priority = crop.getMoisture() + crop.getTime();
-    if (priority >= minValue && priority <= maxValue)
-        return priority;
-    else
-        return 0; // this is an invalid order object
-}
