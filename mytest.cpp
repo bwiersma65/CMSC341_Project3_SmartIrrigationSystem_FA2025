@@ -138,11 +138,13 @@ public:
 int priorityFn1(const Crop &crop);// works with a MAXHEAP
 int priorityFn2(const Crop &crop);// works with a MINHEAP
 
+// Tester class to house test functions for testing aspects of irrigator, region, and crop class
 class Tester{
     public:
     
 };
 
+// Calls test functions from Tester class
 int main(){
     Random regionGen(10,30);
     Random idGen(MINCROPID,MAXCROPID);
