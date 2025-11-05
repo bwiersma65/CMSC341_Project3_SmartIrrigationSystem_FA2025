@@ -141,7 +141,11 @@ int priorityFn2(const Crop &crop);// works with a MINHEAP
 // Tester class to house test functions for testing aspects of irrigator, region, and crop class
 class Tester{
     public:
-    
+        // After insertion of 300 nodes to min-heap, call checkHeap to traverse tree and check
+        // for min-heap property satisfaction at each node
+        bool testMinHeapInsertNormal(Crop* root) {
+            return false;
+        }
 };
 
 // Calls test functions from Tester class

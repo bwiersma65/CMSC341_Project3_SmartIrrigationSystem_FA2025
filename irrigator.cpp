@@ -132,6 +132,6 @@ bool Irrigator::getCrop(Crop & aCrop){
 /*
 Private helpers
 */
-bool Irrigator::checkHeap(Region* root) {
+bool Region::checkHeap(Crop* root) {
   
 }
