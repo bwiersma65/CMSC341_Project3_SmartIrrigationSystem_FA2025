@@ -163,6 +163,8 @@ class Region{
      * Private function declarations go here! *
      ******************************************/
 
+     void countCrops(Crop* node, int& numCrops) const;
+
 };
 
 class Irrigator{

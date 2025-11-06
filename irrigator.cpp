@@ -35,7 +35,7 @@ bool Region::insertCrop(const Crop& crop) {
 
 int Region::numCrops() const
 {
-  
+  int numCrops = 0;
 }
 prifn_t Region::getPriorityFn() const {
   
@@ -88,6 +88,18 @@ ostream& operator<<(ostream& sout, const Crop& crop) {
         << ", current time: " << crop.getTimeString()
         << ", plant type: " << crop.getTypeString();
   return sout;
+}
+
+void Region::countCrops(Crop* node, int& numCrops) const {
+  if (node == NULL) {
+    return;
+  }
+
+  numCrops++;
+
+  countCrops(node->m_left, numCrops);
+
+  countCrops(node->m_right, numCrops);
 }
 
 //////////////////////////////////////////////////////////////
