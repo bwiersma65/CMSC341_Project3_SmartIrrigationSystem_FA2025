@@ -160,6 +160,7 @@ class Tester{
                 aHeap.insertCrop(aNode);
             }
             
+            return checkHeapness(&aHeap);
         }
 
         bool checkHeapness (Region* heap) {
