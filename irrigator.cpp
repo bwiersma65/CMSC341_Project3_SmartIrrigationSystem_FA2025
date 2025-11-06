@@ -32,13 +32,18 @@ void Region::mergeWithQueue(Region& rhs) {
 bool Region::insertCrop(const Crop& crop) {
     
 }
-
+// uses private helper countCrops to reursively preorder traverse heap and increment counter for each non-null node
 int Region::numCrops() const
 {
+  // counter
   int numCrops = 0;
+  // call to recursive helper
+  countCrops(m_heap, numCrops);
+  // returns number of non-null nodes visited in heap tree
+  return numCrops;
 }
 prifn_t Region::getPriorityFn() const {
-  
+  return m_priorFunc;
 }
 Crop Region::getNextCrop() {
     
