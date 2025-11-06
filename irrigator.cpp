@@ -55,10 +55,10 @@ void Region::setStructure(STRUCTURE structure){
     
 }
 STRUCTURE Region::getStructure() const {
-  
+  return m_structure;
 }
 HEAPTYPE Region::getHeapType() const {
-  
+  return m_heapType;
 }
 void Region::printCropsQueue() const {
   
