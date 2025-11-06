@@ -201,7 +201,7 @@ class Tester{
         bool checkMaxHeapness(Crop* heap, bool& isHeap) {
             // base case: empty node
             if (heap == NULL) {
-                return;
+                return isHeap;
             }
 
             // check if root priority is lower priority (larger number) than its children
@@ -233,4 +233,36 @@ int main() {
         cout << "testMinHeapInsertNormal failed" << endl;
     }
     return 0;
+}
+
+int priorityFn1(const Crop &crop) {
+    //needs MAXHEAP
+    //priority value is determined based on some criteria
+    //priority value falls in the range [30-116]
+    //the highest priority would be 110+6 = 116
+    //the lowest priority would be 30+0 = 30
+    //the larger value means the higher priority
+    int minValue = 30;
+    int maxValue = 116;
+    int priority = crop.getTemperature() + crop.getType();
+    if (priority >= minValue && priority <= maxValue)
+        return priority;
+    else
+        return 0; // this is an invalid order object
+}
+
+int priorityFn2(const Crop &crop) {
+    //needs MINHEAP
+    //priority value is determined based on some criteria
+    //priority value falls in the range [1-103]
+    //the highest priority would be 1+0 = 1
+    //the lowest priority would be 100+3 = 103
+    //the smaller value means the higher priority
+    int minValue = 1;
+    int maxValue = 103;
+    int priority = crop.getMoisture() + crop.getTime();
+    if (priority >= minValue && priority <= maxValue)
+        return priority;
+    else
+        return 0; // this is an invalid order object
 }
