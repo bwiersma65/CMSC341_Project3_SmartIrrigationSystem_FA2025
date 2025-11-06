@@ -139,12 +139,73 @@ int priorityFn2(const Crop &crop);// works with a MINHEAP
 
 class Tester{
     public:
-        bool testMinInsertNormal() {
-            Region aHeap;
+        bool testMinHeapInsertNormal() {
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+
+            int rndRegion = regionGen.getRandNum();
+            Region aHeap(priorityFn2, MINHEAP, NOSTRUCT, rndRegion);
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+            
+        }
+
+        bool checkHeapness (Region* heap) {
+            if (heap->getHeapType() == MINHEAP) {
+                bool isHeap;
+                return checkMinHeapness(heap->m_heap, isHeap);
+            }
+            else if (heap->getHeapType() == MAXHEAP) {
+                bool isHeap;
+                return checkMaxHeapness(heap->m_heap, isHeap);
+            }
+        }
+
+        /*
+        Takes Crop (node) pointer and reference to bool representing heapness
+        Preorder traversal of tree, checking if Crop priority is lower (higher number) than that if its children
+        Returns true if heap satisfies minHeap property at all nodes, false if not
+        */
+        bool checkMinHeapness(Crop* heap, bool& isHeap) {
+            // base case: empty node
+            if (heap == NULL) {
+                return isHeap;
+            }
+
+            // check if root priority is lower priority (larger number) than its children
+            if ((priorityFn2(*heap) > priorityFn2((*heap->m_left))) || 
+                (priorityFn2(*heap) > priorityFn2(*(heap->m_right)))) {
+                    isHeap = false;
+            }
+
+            checkMinHeapness(heap->m_left, isHeap);
+
+            checkMinHeapness(heap->m_right, isHeap);
+        }
+
+        bool checkMaxHeapness(Crop* heap, bool& isHeap) {
+
         }
 };
 
 int main() {
+    bool passed;
+    Tester test;
+
+    
+    passed = test.testMinHeapInsertNormal();
 
 
 }
