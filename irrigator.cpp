@@ -5,7 +5,10 @@ Region::Region(){
 }
 Region::Region(prifn_t priFn, HEAPTYPE heapType, STRUCTURE structure, int regPrior)
 {
-  
+  m_priorFunc = priFn;
+  m_heapType = heapType;
+  m_structure = structure;
+  m_regPrior = regPrior;
 }
 Region::~Region()
 {
