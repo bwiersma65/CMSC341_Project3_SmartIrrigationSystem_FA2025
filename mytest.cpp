@@ -193,10 +193,27 @@ class Tester{
             checkMinHeapness(heap->m_left, isHeap);
 
             checkMinHeapness(heap->m_right, isHeap);
+
+            return isHeap;
         }
 
         bool checkMaxHeapness(Crop* heap, bool& isHeap) {
+            // base case: empty node
+            if (heap == NULL) {
+                return;
+            }
 
+            // check if root priority is lower priority (larger number) than its children
+            if ((priorityFn1(*heap) < priorityFn1((*heap->m_left))) || 
+                (priorityFn1(*heap) < priorityFn1(*(heap->m_right)))) {
+                    isHeap = false;
+            }
+
+            checkMinHeapness(heap->m_left, isHeap);
+
+            checkMinHeapness(heap->m_right, isHeap);
+
+            return isHeap;
         }
 };
 
