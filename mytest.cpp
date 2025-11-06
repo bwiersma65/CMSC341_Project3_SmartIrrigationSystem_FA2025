@@ -222,8 +222,15 @@ int main() {
     bool passed;
     Tester test;
 
+    cout << "Testing" << endl;
     
     passed = test.testMinHeapInsertNormal();
 
-
+    if (passed) {
+        cout << "testMinHeapInsertNormal passed" << endl;
+    }
+    else {
+        cout << "testMinHeapInsertNormal failed" << endl;
+    }
+    return 0;
 }
