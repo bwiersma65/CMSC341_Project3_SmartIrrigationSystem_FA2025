@@ -1,13 +1,13 @@
 #include "irrigator.h"
 using namespace std;
 
-class Tester {
+class Tester{
     public:
         bool testMinInsertNormal() {
-
+            
         }
-}
+};
 
 int main() {
-
+    
 }
