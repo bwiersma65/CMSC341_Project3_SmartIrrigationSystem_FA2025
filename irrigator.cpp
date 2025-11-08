@@ -76,7 +76,18 @@ void Region::setPriorityFn(prifn_t priFn, HEAPTYPE heapType) {
                    
 }
 void Region::setStructure(STRUCTURE structure){
-    
+    STRUCTURE prev = m_structure;
+    STRUCTURE next = structure;
+
+    if ((prev==SKEW) && (next==LEFTIST)) {
+
+    }
+    else if ((prev==NOSTRUCT) && (next==SKEW)) {
+
+    }
+    else if ((prev==NOSTRUCT) && (next==LEFTIST)) {
+
+    }
 }
 STRUCTURE Region::getStructure() const {
   return m_structure;
