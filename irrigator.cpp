@@ -1,8 +1,15 @@
 // CMSC 341 - Fall 2025 - Project 3
 #include "irrigator.h"
+// creates empty Region with default/empty values
 Region::Region(){ 
-  
+  m_heap = nullptr;
+  m_size = 0;
+  m_priorFunc = nullptr;
+  m_heapType = NOTYPE;
+  m_structure = NOSTRUCT;
+  m_regPrior = 0;
 }
+// creates empty Region specified by parameters
 Region::Region(prifn_t priFn, HEAPTYPE heapType, STRUCTURE structure, int regPrior)
 {
   m_heap = nullptr;
