@@ -5,6 +5,8 @@ Region::Region(){
 }
 Region::Region(prifn_t priFn, HEAPTYPE heapType, STRUCTURE structure, int regPrior)
 {
+  m_heap = nullptr;
+  m_size = 0;
   m_priorFunc = priFn;
   m_heapType = heapType;
   m_structure = structure;
@@ -154,10 +156,10 @@ bool Irrigator::getCrop(Crop & aCrop){
   
 }
 
+bool Irrigator::heapifyIrrigator(Region* aRegion) {
+
+}
+
 Region* Irrigator::findNthRegion(Region* aRegion, int n) const {
-  if (aRegion->m_regPrior == n) {
-    return aRegion;
-  }
-
-
+  
 }
