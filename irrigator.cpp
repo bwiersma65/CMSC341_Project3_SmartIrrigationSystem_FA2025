@@ -55,7 +55,7 @@ void Region::mergeWithQueue(Region& rhs) {
 
 bool Region::insertCrop(const Crop& crop) {
   // if any of Region members are set to invalid values, do not add Crop to Region
-  if ((m_priorFunc==nullptr) || (m_heapType==NOTYPE) || (m_structure==NOSTRUCT) || (m_regPrior < 0)) {
+  if ((m_priorFunc==nullptr) || (m_heapType==NOTYPE) || (m_structure==NOSTRUCT) || (m_regPrior <= 0)) {
     return false;
   }
   else {
@@ -146,6 +146,19 @@ void Region::countCrops(Crop* node, int& numCrops) const {
   countCrops(node->m_left, numCrops);
 
   countCrops(node->m_right, numCrops);
+}
+
+void Region::merge() {
+  if (m_structure==LEFTIST) {
+
+  }
+  else if (m_structure==SKEW) {
+
+  }
+}
+
+void Region::swap() {
+  
 }
 
 //////////////////////////////////////////////////////////////
