@@ -58,6 +58,9 @@ bool Region::insertCrop(const Crop& crop) {
   if ((m_priorFunc==nullptr) || (m_heapType==NOTYPE) || (m_structure==NOSTRUCT) || (m_regPrior <= 0)) {
     return false;
   }
+  else if (m_priorFunc(crop) <= 0) {
+    return false;
+  }
   else {
 
   }
