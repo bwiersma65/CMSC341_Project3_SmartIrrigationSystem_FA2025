@@ -32,8 +32,14 @@ Region::~Region()
 {
   
 }
+// FIX ME
 void Region::clear() {
-    
+  delete m_heap;
+  m_size = 0;
+  m_priorFunc = nullptr;
+  m_heapType = NOTYPE;
+  m_structure = NOSTRUCT;
+  m_regPrior = 0;    
 }
 Region::Region(const Region& rhs)
 {
