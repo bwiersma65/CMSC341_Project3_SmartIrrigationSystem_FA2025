@@ -181,7 +181,7 @@ bool Irrigator::getCrop(Crop & aCrop){
 void Irrigator::heapifyIrrigator(Region aRegion, int& index) {
   int parentIndex = (index-1)/2;
   // base case: current Region and index are root of array (index 0)
-  if (parentIndex < 0) {
+  if (index == 0) {
     return;
   }
   Region parent = m_heap[parentIndex];
