@@ -109,7 +109,12 @@ void Region::countCrops(Crop* node, int& numCrops) const {
 
 //////////////////////////////////////////////////////////////
 Irrigator::Irrigator(int size){
-  
+  // set total capacity of heap to parameter
+  m_capacity = size;
+  // m_heap assigned with address of first element of empty array of Regions sized to parameter
+  m_heap = new Region[m_capacity];
+  // set size of heap to 0
+  m_size = 0;
 }
 Irrigator::~Irrigator(){
   
@@ -147,4 +152,12 @@ bool Irrigator::setStructure(STRUCTURE structure, int n){
 }
 bool Irrigator::getCrop(Crop & aCrop){
   
+}
+
+Region* Irrigator::findNthRegion(Region* aRegion, int n) const {
+  if (aRegion->m_regPrior == n) {
+    return aRegion;
+  }
+
+
 }
