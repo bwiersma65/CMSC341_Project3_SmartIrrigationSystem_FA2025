@@ -14,10 +14,19 @@ Region::Region(prifn_t priFn, HEAPTYPE heapType, STRUCTURE structure, int regPri
 {
   m_heap = nullptr;
   m_size = 0;
-  m_priorFunc = priFn;
-  m_heapType = heapType;
-  m_structure = structure;
-  m_regPrior = regPrior;
+
+  if ((heapType == NOTYPE) || (structure == NOSTRUCT) || (regPrior == 0)) {
+    m_priorFunc = nullptr;
+    m_heapType = NOTYPE;
+    m_structure = NOSTRUCT;
+    m_regPrior = 0;
+  }
+  else {
+    m_priorFunc = priFn;
+    m_heapType = heapType;
+    m_structure = structure;
+    m_regPrior = regPrior;
+  }
 }
 Region::~Region()
 {
@@ -119,7 +128,7 @@ void Region::countCrops(Crop* node, int& numCrops) const {
 //////////////////////////////////////////////////////////////
 Irrigator::Irrigator(int size){
   // set total capacity of heap to parameter
-  m_capacity = size;
+  m_capacity = size + 1;
   // m_heap assigned with address of first element of empty array of Regions sized to parameter
   m_heap = new Region[m_capacity];
   // set size of heap to 0
