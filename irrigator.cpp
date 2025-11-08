@@ -128,7 +128,7 @@ void Region::countCrops(Crop* node, int& numCrops) const {
 //////////////////////////////////////////////////////////////
 Irrigator::Irrigator(int size){
   // set total capacity of heap to parameter
-  m_capacity = size + 1;
+  m_capacity = size;
   // m_heap assigned with address of first element of empty array of Regions sized to parameter
   Region array[m_capacity];
   m_heap = array;
