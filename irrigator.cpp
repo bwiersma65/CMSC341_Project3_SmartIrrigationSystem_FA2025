@@ -148,7 +148,7 @@ void Region::countCrops(Crop* node, int& numCrops) const {
   countCrops(node->m_right, numCrops);
 }
 
-void Region::merge() {
+void Region::merge(Crop crop) {
   if (m_structure==LEFTIST) {
 
   }
@@ -158,7 +158,7 @@ void Region::merge() {
 }
 
 void Region::swap() {
-  
+
 }
 
 //////////////////////////////////////////////////////////////
@@ -176,11 +176,16 @@ Irrigator::~Irrigator(){
   
 }
 bool Irrigator::addRegion(Region & aRegion){
-  // place aRegion at end of array (this assumes first Region at index 0)
-  m_heap[m_size] = aRegion;
-  int index = m_size;
-  heapifyIrrigator(m_heap[m_size], index);
-  return true;
+  if (m_capacity==m_size) {
+    return false;
+  }
+  else {
+    // place aRegion at end of array (this assumes first Region at index 0)
+    m_heap[m_size] = aRegion;
+    int index = m_size;
+    heapifyIrrigator(m_heap[m_size], index);
+    return true;
+  }
 }
 
 bool Irrigator::getRegion(Region & aRegion){
