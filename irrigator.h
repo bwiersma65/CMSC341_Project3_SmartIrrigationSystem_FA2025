@@ -166,7 +166,7 @@ class Region{
 
      void countCrops(Crop* node, int& numCrops) const;
 
-     void merge();
+     void merge(Crop crop);
 
      void swap();
 

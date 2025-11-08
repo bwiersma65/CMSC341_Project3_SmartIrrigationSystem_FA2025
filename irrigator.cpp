@@ -50,7 +50,18 @@ Region& Region::operator=(const Region& rhs) {
   
 }
 void Region::mergeWithQueue(Region& rhs) {
-  
+  try {
+    if ((rhs.m_priorFunc != m_priorFunc) || (rhs.m_structure != m_structure)) {
+      throw domain_error("Mismatch priority or structure");
+    }
+
+    if (&rhs != this) {
+      
+    }
+  }
+  catch (domain_error& excpt) {
+
+  }
 }
 
 bool Region::insertCrop(const Crop& crop) {
