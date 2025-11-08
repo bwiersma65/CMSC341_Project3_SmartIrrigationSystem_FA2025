@@ -54,7 +54,13 @@ void Region::mergeWithQueue(Region& rhs) {
 }
 
 bool Region::insertCrop(const Crop& crop) {
-    
+  // if any of Region members are set to invalid values, do not add Crop to Region
+  if ((m_priorFunc==nullptr) || (m_heapType==NOTYPE) || (m_structure==NOSTRUCT) || (m_regPrior < 0)) {
+    return false;
+  }
+  else {
+
+  }
 }
 // uses private helper countCrops to reursively preorder traverse heap and increment counter for each non-null node
 int Region::numCrops() const
