@@ -130,7 +130,9 @@ Irrigator::Irrigator(int size){
   // set total capacity of heap to parameter
   m_capacity = size + 1;
   // m_heap assigned with address of first element of empty array of Regions sized to parameter
-  m_heap = new Region[m_capacity];
+  Region array[m_capacity];
+  m_heap = array;
+  // m_heap = new Region[m_capacity];
   // set size of heap to 0
   m_size = 0;
 }
@@ -138,7 +140,11 @@ Irrigator::~Irrigator(){
   
 }
 bool Irrigator::addRegion(Region & aRegion){
-  
+  // place aRegion at end of array (this assumes first Region at index 0)
+  m_heap[m_size] = aRegion;
+  int index = m_size;
+  heapifyIrrigator(m_heap[m_size], index);
+  return true;
 }
 
 bool Irrigator::getRegion(Region & aRegion){
@@ -172,8 +178,21 @@ bool Irrigator::getCrop(Crop & aCrop){
   
 }
 
-bool Irrigator::heapifyIrrigator(Region* aRegion) {
-
+void Irrigator::heapifyIrrigator(Region aRegion, int& index) {
+  int parentIndex = (index-1)/2;
+  // base case: current Region and index are root of array (index 0)
+  if (parentIndex < 0) {
+    return;
+  }
+  Region parent = m_heap[parentIndex];
+  
+  if (parent.m_regPrior < aRegion.m_regPrior) {
+    Region temp = parent;
+    m_heap[parentIndex] = aRegion;
+    m_heap[index] = temp;
+    index = parentIndex;
+    return heapifyIrrigator(m_heap[index], index);
+  }
 }
 
 Region* Irrigator::findNthRegion(Region* aRegion, int n) const {

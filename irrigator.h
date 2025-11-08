@@ -135,7 +135,8 @@ class Region{
     Region(const Region& rhs);
     Region& operator=(const Region& rhs);
     bool insertCrop(const Crop& crop);
-    Crop getNextCrop(); // Return the highest priority crop
+    // Store heap root, merge subheaps, return stored root
+    Crop getNextCrop(); // Return the highest priority crop and remove it
     void mergeWithQueue(Region& rhs);
     void clear();
     int numCrops() const; // Return number of nodes in queue
@@ -165,8 +166,12 @@ class Region{
 
      void countCrops(Crop* node, int& numCrops) const;
 
-};
+     void merge();
 
+     void swap();
+
+};
+// min-heap implemented as array
 class Irrigator{
     public:
     friend class Grader; // for grading purposes
@@ -186,12 +191,16 @@ class Irrigator{
     private:
     Region * m_heap;          // Array to hold the heap
     int m_capacity;           // size of array
-    int m_size;               // Current size of the heap
+    int m_size;               // Current number of Regions in the array
 
     /******************************************
      * Private function declarations go here! *
      ******************************************/
 
     void dump(int index);
+
+    void heapifyIrrigator(Region aRegion, int& index);
+
+    Region* findNthRegion(Region* aRegion, int n) const;
 };
 #endif
