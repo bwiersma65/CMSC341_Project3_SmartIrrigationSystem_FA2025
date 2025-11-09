@@ -34,7 +34,9 @@ Region::~Region()
 }
 // FIX ME
 void Region::clear() {
+  // implement this
   delete m_heap;
+
   m_size = 0;
   m_priorFunc = nullptr;
   m_heapType = NOTYPE;
@@ -56,7 +58,7 @@ void Region::mergeWithQueue(Region& rhs) {
     }
 
     if (&rhs != this) {
-      
+
     }
   }
   catch (domain_error& excpt) {
@@ -177,14 +179,21 @@ void Region::swap() {
 
 //////////////////////////////////////////////////////////////
 Irrigator::Irrigator(int size){
-  // set total capacity of heap to parameter
-  m_capacity = size;
-  // m_heap assigned with address of first element of empty array of Regions sized to parameter
-  Region array[m_capacity];
-  m_heap = array;
-  // m_heap = new Region[m_capacity];
-  // set size of heap to 0
-  m_size = 0;
+  // check for invalid array sizes
+  if (size <= 0) {
+    m_capacity = 0;
+    m_heap = nullptr;
+  }
+  else {
+    // set total capacity of heap to parameter
+    m_capacity = size;
+    // m_heap assigned with address of first element of empty array of Regions sized to parameter
+    Region array[m_capacity];
+    m_heap = array;
+    // m_heap = new Region[m_capacity];
+    // set size of heap to 0
+    m_size = 0;
+  }
 }
 Irrigator::~Irrigator(){
   
@@ -229,6 +238,11 @@ bool Irrigator::setPriorityFn(prifn_t priFn, HEAPTYPE heapType, int n){
 bool Irrigator::setStructure(STRUCTURE structure, int n){
   
 }
+// This will call Region::getNextCrop() for the highest-priority Region currently in the Irrigator
+// Returns the Crop in the parameter by deep-copying from result of getNextCrop() into parameter aCrop
+
+// To find highest-priority Region, look at head of Region array and check if empty or not.
+// If checked Region is empty, dequeue and remove it
 bool Irrigator::getCrop(Crop & aCrop){
   
 }
