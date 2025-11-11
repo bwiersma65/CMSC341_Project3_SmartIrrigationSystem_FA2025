@@ -57,7 +57,7 @@ Region& Region::operator=(const Region& rhs) {
   if (rhs.m_heap == m_heap) {
     return;
   }
-  
+
 }
 void Region::mergeWithQueue(Region& rhs) {
   // checks against self-merging; if both heap roots are the same address, they are the same Region
@@ -81,12 +81,16 @@ bool Region::insertCrop(const Crop& crop) {
   if ((m_priorFunc==nullptr) || (m_heapType==NOTYPE) || (m_structure==NOSTRUCT) || (m_regPrior <= 0)) {
     return false;
   }
+  // checks if crop is null or not; if so, do not attempt to add to Region
+  else if (&crop == nullptr) {
+    return false;
+  }
   // if Crop is of invalid priority value, do not add to Region heap
   else if (m_priorFunc(crop) <= 0) {
     return false;
   }
   else {
-
+    
   }
 }
 // uses private helper countCrops to reursively preorder traverse heap and increment counter for each non-null node
