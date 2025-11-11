@@ -209,6 +209,12 @@ void Region::countCrops(Crop* node, int& numCrops) const {
   countCrops(node->m_right, numCrops);
 }
 
+/*
+Merges the heaps rooted at p1 and p2 recursively
+According to structure (Leftist or Skew) and heaptype (Min or Max)
+If either parameter heap is empty return the other non-empty
+If both parameters are empty heaps, return nullptr
+*/
 Crop* Region::merge(Crop* p1, Crop* p2) {
   // base case
   // check if either heap to be merged is empty; if so, result is just non-empty heap
@@ -216,7 +222,7 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
   else if (p2==nullptr) return p1;
 
   if (m_structure==LEFTIST) {
-
+    ///////////////////////////////////////////////////////////////////////////////////
     // LEFTIST MIN-HEAP //
     if (m_heapType==MINHEAP) {
       // p1 is lower priority than p2
@@ -245,6 +251,7 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
 
       return p1;
     }
+    ///////////////////////////////////////////////////////////////////////////////////
     // LEFTIST MAX-HEAP //
     else if (m_heapType==MAXHEAP) {
       // p1 is lower priority than p2
@@ -276,7 +283,7 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
 
   }
   else if (m_structure==SKEW) {
-
+    ///////////////////////////////////////////////////////////////////////////////////
     // SKEW MIN-HEAP //
     if (m_heapType==MINHEAP) {
       // p1 is lower priority than p2
@@ -299,6 +306,7 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
 
       return p1;
     }
+    ///////////////////////////////////////////////////////////////////////////////////
     // SKEW MAX-HEAP //
     else if (m_heapType==MAXHEAP) {
       // p1 is lower priority than p2
@@ -323,6 +331,7 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
     }
   }
 }
+
 // Finds minimum NPL value between parameter's children
 // If parameter's children are empty/null, treat their NPL as -1
 int Region::minNPL (Crop* node) const {
