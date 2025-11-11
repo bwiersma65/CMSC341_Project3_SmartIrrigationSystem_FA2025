@@ -210,6 +210,7 @@ void Region::countCrops(Crop* node, int& numCrops) const {
 }
 
 Crop* Region::merge(Crop* p1, Crop* p2) {
+  // base case
   // check if either heap to be merged is empty; if so, result is just non-empty heap
   if (p1==nullptr) return p2;
   else if (p2==nullptr) return p1;
@@ -227,9 +228,11 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
         temp = nullptr;
       }
 
+      // recursively call merge on p1's right child and p2; p1 and its left child have been "hung"
       p1->m_right = merge(p1->m_right, p2);
 
-
+      // update p1's npl after zipping up its right child
+      p1->m_npl = (1 + minNPL(p1->m_left->m_npl, p1->m_right->m_npl));
     }
     // LEFTIST MAX-HEAP
     else if (m_heapType==MAXHEAP) {
@@ -286,7 +289,25 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
   }
 }
 
-int minNPL (int leftNPL, int rightNPL) {
+int Region::minNPL (Crop* left, Crop* right) const {
+  int leftNPL, rightNPL;
+
+  // check for empty left node
+  if (left==nullptr) {
+    leftNPL = -1;
+  }
+  else {
+    leftNPL = left->m_npl;
+  }
+  // check for empty right node
+  if (right==nullptr) {
+    rightNPL = -1;
+  }
+  else {
+    rightNPL = right->m_npl;
+  }
+  
+  // find minimum npl between children
   if (leftNPL > rightNPL) {
     return rightNPL;
   }
