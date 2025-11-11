@@ -49,11 +49,17 @@ void Region::clear() {
 /*
 Copy constructor
 Take deep-copy of parameter Region and its heap
-Build this heap by copying rhs heap in pre-order fashion
+Builds this object's heap by copying rhs heap in pre-order fashion
 */
 // Edge case: copy empty object (rhs is empty)
 Region::Region(const Region& rhs)
 {
+  m_size = rhs.m_size;
+  m_priorFunc = rhs.m_priorFunc;
+  m_heapType = rhs.m_heapType;
+  m_structure = rhs.m_structure;
+  m_regPrior = rhs.m_regPrior;
+
   
 }
 // Edge case: copy empty object (rhs is empty)
