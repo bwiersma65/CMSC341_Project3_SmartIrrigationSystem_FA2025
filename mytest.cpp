@@ -140,6 +140,7 @@ int priorityFn2(const Crop &crop);// works with a MINHEAP
 class Tester{
     public:
         bool testMinHeapInsertNormal() {
+            //////////////////////Random Generators////////////////////////
             Random regionGen(1,30);
             Random idGen(MINCROPID,MAXCROPID);
             Random temperatureGen(MINTEMP,MAXTEMP);
@@ -159,6 +160,7 @@ class Tester{
                     typeGen.getRandNum());
                 aHeap.insertCrop(aNode);
             }
+            ///////////////////////////////////////////////////////////////
             
             return checkHeapness(&aHeap);
         }
@@ -176,7 +178,7 @@ class Tester{
 
         /*
         Takes Crop (node) pointer and reference to bool representing heapness
-        Preorder traversal of tree, checking if Crop priority is lower (higher number) than that if its children
+        Preorder traversal of tree, checking if Crop priority is lower (higher number) than that of its children
         Returns true if heap satisfies minHeap property at all nodes, false if not
         */
         bool checkMinHeapness(Crop* heap, bool& isHeap) {
