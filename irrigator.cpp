@@ -46,6 +46,11 @@ void Region::clear() {
   m_structure = NOSTRUCT;
   m_regPrior = 0;    
 }
+/*
+Copy constructor
+Take deep-copy of parameter Region and its heap
+Build this heap by copying rhs heap in pre-order fashion
+*/
 // Edge case: copy empty object (rhs is empty)
 Region::Region(const Region& rhs)
 {
@@ -93,7 +98,10 @@ bool Region::insertCrop(const Crop& crop) {
 
   }
 }
-// uses private helper countCrops to reursively preorder traverse heap and increment counter for each non-null node
+/*
+uses private helper countCrops to recursively preorder traverse heap and increment counter for each non-null node
+returns number of Crops in heap
+*/
 int Region::numCrops() const
 {
   // counter
@@ -197,8 +205,13 @@ ostream& operator<<(ostream& sout, const Crop& crop) {
   return sout;
 }
 
+/*
+Traverses the heap in pre-order fashion, incrementing for every non-null node found
+The counter is returned in the int& parameter
+*/
 void Region::countCrops(Crop* node, int& numCrops) const {
-  if (node == NULL) {
+  // base case
+  if (node == nullptr) {
     return;
   }
 
@@ -207,6 +220,8 @@ void Region::countCrops(Crop* node, int& numCrops) const {
   countCrops(node->m_left, numCrops);
 
   countCrops(node->m_right, numCrops);
+
+  return;
 }
 
 /*
@@ -332,8 +347,10 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
   }
 }
 
-// Finds minimum NPL value between parameter's children
-// If parameter's children are empty/null, treat their NPL as -1
+/*
+Finds minimum NPL value between parameter's children
+If parameter's children are empty/null, treat their NPL as -1
+*/
 int Region::minNPL (Crop* node) const {
   int leftNPL, rightNPL;
 
@@ -361,9 +378,12 @@ int Region::minNPL (Crop* node) const {
     return leftNPL;
   }
 }
-// Checks the NPL values of the parameter's children
-// If the left child NPL is less than the right child NPL, Leftist property is not satisfied; return false
-// Otherwise, return true
+
+/*
+Checks the NPL values of the parameter's children
+If the left child NPL is less than the right child NPL, Leftist property is not satisfied; return false
+Otherwise, return true
+*/
 bool Region::checkNPL(Crop* node) const {
   int leftNPL, rightNPL;
 
