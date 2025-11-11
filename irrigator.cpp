@@ -217,7 +217,7 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
 
   if (m_structure==LEFTIST) {
 
-    // LEFTIST MIN-HEAP
+    // LEFTIST MIN-HEAP //
     if (m_heapType==MINHEAP) {
       // p1 is lower priority than p2
       if (m_priorFunc(*p1) > m_priorFunc(*p2)) {
@@ -245,15 +245,39 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
 
       return p1;
     }
-    // LEFTIST MAX-HEAP
+    // LEFTIST MAX-HEAP //
     else if (m_heapType==MAXHEAP) {
+      // p1 is lower priority than p2
+      if (m_priorFunc(*p1) < m_priorFunc(*p2)) {
+        // swap p1 and p2 so p1 holds the higher-priority Crop
+        Crop* temp = p1;
+        p1 = p2;
+        p2 = temp;
+        temp = nullptr;
+      }
 
+      // recursively call merge on p1's right child and p2; p1 and its left child have been "hung"
+      p1->m_right = merge(p1->m_right, p2);
+
+      // update p1's npl after zipping up its right child
+      p1->m_npl = 1 + minNPL(p1);
+
+      // left child NPL must be greater than or equal to right child NPL
+      // if this property not satisfied, swap the children
+      if (!checkNPL(p1)) {
+        Crop* temp = p1->m_left;
+        p1->m_left = p1->m_right;
+        p1->m_right = temp;
+        temp = nullptr;
+      }
+
+      return p1;
     }
 
   }
   else if (m_structure==SKEW) {
 
-    // SKEW MIN-HEAP
+    // SKEW MIN-HEAP //
     if (m_heapType==MINHEAP) {
       // p1 is lower priority than p2
       if (m_priorFunc(*p1) > m_priorFunc(*p2)) {
@@ -275,7 +299,7 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
 
       return p1;
     }
-    // SKEW MAX-HEAP
+    // SKEW MAX-HEAP //
     else if (m_heapType==MAXHEAP) {
       // p1 is lower priority than p2
       if (m_priorFunc(*p1) < m_priorFunc(*p2)) {
