@@ -168,7 +168,7 @@ class Region{
 
      Crop* merge(Crop* p1, Crop* p2);
 
-     void swap();
+     int minNPL(Crop* left, Crop* right) const;
 
 };
 // min-heap implemented as array
