@@ -176,6 +176,8 @@ class Region{
      // if no, return false
      bool checkNPL(Crop* node) const;
 
+     Crop* copyHeap(Crop* root) const;
+
 };
 // min-heap implemented as array
 class Irrigator{
