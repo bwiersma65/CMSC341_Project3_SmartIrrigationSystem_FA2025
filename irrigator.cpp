@@ -90,7 +90,7 @@ bool Region::insertCrop(const Crop& crop) {
     return false;
   }
   else {
-    
+
   }
 }
 // uses private helper countCrops to reursively preorder traverse heap and increment counter for each non-null node
@@ -209,12 +209,40 @@ void Region::countCrops(Crop* node, int& numCrops) const {
   countCrops(node->m_right, numCrops);
 }
 
-void Region::merge(Crop crop) {
+Crop* Region::merge(Crop* p1, Crop* p2) {
   if (m_structure==LEFTIST) {
+
 
   }
   else if (m_structure==SKEW) {
+    // check if either heap to be merged is empty; if so, result is just non-empty heap
+    if (p1==nullptr) return p2;
+    else if (p2==nullptr) return p1;
 
+    if (m_heapType==MINHEAP) {
+      // p1 is lower priority than p2
+      if (m_priorFunc(*p1) > m_priorFunc(*p2)) {
+        // swap p1 and p2 so p1 holds the higher-priority Crop
+        Crop* temp = p1;
+        p1 = p2;
+        p2 = temp;
+        temp = nullptr;
+      }
+
+      // swap the left and right child of p1
+      Crop* temp = p1->m_left;
+      p1->m_left = p1->m_right;
+      p1->m_right = temp;
+      temp = nullptr;
+
+      // recursively call merge on p1's left child and p2; p1 and its right child have been "hung"
+      p1->m_left = merge(p1->m_left, p2);
+
+      return p1;
+    }
+    else if (m_heapType==MAXHEAP) {
+
+    }
   }
 }
 
