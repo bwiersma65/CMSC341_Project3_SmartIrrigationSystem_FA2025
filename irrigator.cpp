@@ -232,13 +232,18 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
       p1->m_right = merge(p1->m_right, p2);
 
       // update p1's npl after zipping up its right child
-      p1->m_npl = 1 + (minNPL(p1->m_left, p1->m_right));
+      p1->m_npl = 1 + minNPL(p1);
 
       // left child NPL must be greater than or equal to right child NPL
-      // if not, swap the children
-      if (p1->m_left->m_npl < p1->m_right->m_npl) {
+      // if this property not satisfied, swap the children
+      if (!checkNPL(p1)) {
         Crop* temp = p1->m_left;
+        p1->m_left = p1->m_right;
+        p1->m_right = temp;
+        temp = nullptr;
       }
+
+      return p1;
     }
     // LEFTIST MAX-HEAP
     else if (m_heapType==MAXHEAP) {
@@ -294,24 +299,24 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
     }
   }
 }
-// Finds minimum NPL value between parameters
-// If parameter empty/null, assign its NPL as -1
-int Region::minNPL (Crop* left, Crop* right) const {
+// Finds minimum NPL value between parameter's children
+// If parameter's children are empty/null, treat their NPL as -1
+int Region::minNPL (Crop* node) const {
   int leftNPL, rightNPL;
 
-  // check for empty left node
-  if (left==nullptr) {
+  // check for empty left child
+  if (node->m_left==nullptr) {
     leftNPL = -1;
   }
   else {
-    leftNPL = left->m_npl;
+    leftNPL = node->m_left->m_npl;
   }
-  // check for empty right node
-  if (right==nullptr) {
+  // check for empty right child
+  if (node->m_right==nullptr) {
     rightNPL = -1;
   }
   else {
-    rightNPL = right->m_npl;
+    rightNPL = node->m_right->m_npl;
   }
 
   // find minimum npl between children
@@ -323,7 +328,9 @@ int Region::minNPL (Crop* left, Crop* right) const {
     return leftNPL;
   }
 }
-
+// Checks the NPL values of the parameter's children
+// If the left child NPL is less than the right child NPL, Leftist property is not satisfied; return false
+// Otherwise, return true
 bool Region::checkNPL(Crop* node) const {
   int leftNPL, rightNPL;
 

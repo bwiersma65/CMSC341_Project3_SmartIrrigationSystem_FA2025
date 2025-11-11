@@ -169,8 +169,11 @@ class Region{
      Crop* merge(Crop* p1, Crop* p2);
 
      // finds minimum NPL value between parameters
-     int minNPL(Crop* left, Crop* right) const;
+     int minNPL(Crop* node) const;
 
+     // checks if parameter's children satisfy the Leftist heap property
+     // if yes, return true
+     // if no, return false
      bool checkNPL(Crop* node) const;
 
 };
