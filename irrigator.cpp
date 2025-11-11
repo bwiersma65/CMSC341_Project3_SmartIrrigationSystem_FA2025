@@ -60,7 +60,7 @@ Region::Region(const Region& rhs)
   m_structure = rhs.m_structure;
   m_regPrior = rhs.m_regPrior;
 
-  
+
 }
 // Edge case: copy empty object (rhs is empty)
 Region& Region::operator=(const Region& rhs) {
@@ -413,6 +413,32 @@ bool Region::checkNPL(Crop* node) const {
   else {
     return true;
   }
+}
+
+/*
+Helper for copy constructor
+Traverses tree rooted at parameter in pre-order fashion recursively
+Ultimately returns root of deep-copied tree
+*/
+Crop* Region::copyHeap(Crop* root) const {
+  // base case
+  if (root==nullptr) {
+    return nullptr;
+  }
+  // create newly-allocated copy of parameter Crop
+  // initializes members to parameter member values, right and left children to nullptr, and NPL to 0
+  Crop* newRoot = new Crop(root->m_cropID, root->m_temperature, root->m_moisture, root->m_time, root->m_type);
+  // because Crop parameterized constructor initializes m_npl to 0, must change to match value of root's m_npl
+  newRoot->m_npl = root->m_npl;
+
+  // recursive call to copy parameter's left child
+  newRoot->m_left = copyHeap(root->m_left);
+
+  // recursive call to copy parameter's right child
+  newRoot->m_right = copyHeap(root->m_right);
+
+  // return deep-copied root
+  return newRoot;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
