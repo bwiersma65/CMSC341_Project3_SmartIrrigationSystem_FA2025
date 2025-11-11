@@ -53,13 +53,17 @@ Region::Region(const Region& rhs)
 }
 // Edge case: copy empty object (rhs is empty)
 Region& Region::operator=(const Region& rhs) {
+  // checks against self-copying; if both heap roots are the same address, they are the same Region
+  if (rhs.m_heap == m_heap) {
+    return;
+  }
   
 }
 void Region::mergeWithQueue(Region& rhs) {
   // checks against self-merging; if both heap roots are the same address, they are the same Region
   if (rhs.m_heap == m_heap) {
-    //return;
-    throw domain_error("Attempted self-merge");
+  //if (rhs==this) {
+    return;
   }
   // if both Regions do not match in structure or heap type, do not merge
   if ((rhs.m_structure != m_structure) || (rhs.m_heapType != m_heapType)) {
