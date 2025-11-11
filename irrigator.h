@@ -168,7 +168,10 @@ class Region{
 
      Crop* merge(Crop* p1, Crop* p2);
 
+     // finds minimum NPL value between parameters
      int minNPL(Crop* left, Crop* right) const;
+
+     bool checkNPL(Crop* node) const;
 
 };
 // min-heap implemented as array
