@@ -15,7 +15,8 @@ Region::Region(prifn_t priFn, HEAPTYPE heapType, STRUCTURE structure, int regPri
   m_heap = nullptr;
   m_size = 0;
 
-  if ((heapType == NOTYPE) || (structure == NOSTRUCT) || (regPrior == 0)) {
+  // if ((heapType == NOTYPE) || (structure == NOSTRUCT) || (regPrior <= 0)) {
+  if ((heapType == NOTYPE) || (structure == NOSTRUCT)) {
     m_priorFunc = nullptr;
     m_heapType = NOTYPE;
     m_structure = NOSTRUCT;
@@ -28,49 +29,55 @@ Region::Region(prifn_t priFn, HEAPTYPE heapType, STRUCTURE structure, int regPri
     m_regPrior = regPrior;
   }
 }
+// Deallocates memory and re-initializes member variables
 Region::~Region()
 {
-  
+  this->clear();
 }
 // FIX ME
+// Clears the queue; delete all nodes in heap leaving it empty, and re-initialize member variables
 void Region::clear() {
   // implement this
   delete m_heap;
 
   m_size = 0;
   m_priorFunc = nullptr;
-  m_heapType = NOTYPE;
+  //m_heapType = NOTYPE;
   m_structure = NOSTRUCT;
   m_regPrior = 0;    
 }
+// Edge case: copy empty object (rhs is empty)
 Region::Region(const Region& rhs)
 {
   
 }
-
+// Edge case: copy empty object (rhs is empty)
 Region& Region::operator=(const Region& rhs) {
   
 }
 void Region::mergeWithQueue(Region& rhs) {
-  try {
-    if ((rhs.m_priorFunc != m_priorFunc) || (rhs.m_structure != m_structure)) {
-      throw domain_error("Mismatch priority or structure");
-    }
-
-    if (&rhs != this) {
-
-    }
+  // checks against self-merging; if both heap roots are the same address, they are the same Region
+  if (rhs.m_heap == m_heap) {
+    //return;
+    throw domain_error("Attempted self-merge");
   }
-  catch (domain_error& excpt) {
-
+  // if both Regions do not match in structure or heap type, do not merge
+  if ((rhs.m_structure != m_structure) || (rhs.m_heapType != m_heapType)) {
+    throw domain_error("Mismatch heaptype or structure");
+  }
+  // CHECK THIS
+  // Checks if rhs priority is valid
+  if (rhs.m_regPrior < 0) {
+    return;
   }
 }
-
+// Add check for if crop argument is nullptr
 bool Region::insertCrop(const Crop& crop) {
   // if any of Region members are set to invalid values, do not add Crop to Region
   if ((m_priorFunc==nullptr) || (m_heapType==NOTYPE) || (m_structure==NOSTRUCT) || (m_regPrior <= 0)) {
     return false;
   }
+  // if Crop is of invalid priority value, do not add to Region heap
   else if (m_priorFunc(crop) <= 0) {
     return false;
   }
@@ -91,13 +98,42 @@ int Region::numCrops() const
 prifn_t Region::getPriorityFn() const {
   return m_priorFunc;
 }
+// This should remove the highest priority Crop (root of heap, at m_heap), merge the resultant left and right
+// subtrees together, and return the removed Crop as an object
+// If the heap is empty when this function is called, throw an out_of_range exception
 Crop Region::getNextCrop() {
-    
+  // Check if the heap is empty
+  if (m_heap==nullptr) {
+    throw out_of_range("Crop queue is empty in this Region");
+  }
+  else {
+
+  }
 }
+// Change the m_priorFunc and heapType members for the object to values of respective parameters
+// if they differ from the previous values, rebuild the heap using the new ones (by using merge helper)
+// Do not reallocate new memory, just reuse the pre-existing nodes
+// Don't need to check that prifn is nullptr; make sure heapType is valid
 void Region::setPriorityFn(prifn_t priFn, HEAPTYPE heapType) {
-                   
+  // If NOTYPE passed as argument, clear the heap and set variables to reflect empty Region
+  if (heapType==NOTYPE) {
+    this->clear();
+    return;
+  }
+  else {
+
+  }
 }
+// Change the m_structure member for the object to value of parameter
+// if it differs from the previous value, rebuild the heap using the new one
+// Do not reallocate new memory, just reuse the pre-existing nodes
 void Region::setStructure(STRUCTURE structure){
+  // If NOSTRUCT is passed as argument, clear the heap and set variables to reflect empty Region
+  if (structure==NOSTRUCT) {
+    this->clear();
+    return;
+  }
+  else {
     STRUCTURE prev = m_structure;
     STRUCTURE next = structure;
 
@@ -110,6 +146,7 @@ void Region::setStructure(STRUCTURE structure){
     else if ((prev==NOSTRUCT) && (next==LEFTIST)) {
 
     }
+  }
 }
 STRUCTURE Region::getStructure() const {
   return m_structure;
@@ -177,44 +214,46 @@ void Region::swap() {
 
 }
 
-//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 Irrigator::Irrigator(int size){
-  // check for invalid array sizes
+  // check for invalid array size; if so, make invalid (empty) Irrigator
   if (size <= 0) {
     m_capacity = 0;
     m_heap = nullptr;
+    m_size = 0;
   }
   else {
-    // set total capacity of heap to parameter
+    // set total capacity of heap array to parameter
     m_capacity = size;
     // m_heap assigned with address of first element of empty array of Regions sized to parameter
-    Region array[m_capacity];
-    m_heap = array;
-    // m_heap = new Region[m_capacity];
-    // set size of heap to 0
+    m_heap = new Region[m_capacity];
+    //set size of heap to 0
+    //the maximum value of m_size will be m_capacity-ROOTINDEX because index 0 is unused
     m_size = 0;
   }
 }
 Irrigator::~Irrigator(){
   
 }
+// Should make deep copy of region parameter and add that to queue
 bool Irrigator::addRegion(Region & aRegion){
-  if (m_capacity==m_size) {
+  //index 0 is unused so array is full when m_size equals m_capacity-ROOTINDEX (1)
+  if (m_size>=(m_capacity-ROOTINDEX)) {
     return false;
   }
   else {
-    // place aRegion at end of array (this assumes first Region at index 0)
-    m_heap[m_size] = aRegion;
-    int index = m_size;
-    heapifyIrrigator(m_heap[m_size], index);
+    // place aRegion at first empty index beyond last Region
+    m_heap[m_size+1] = aRegion;
+    int index = m_size+1;
+    heapifyIrrigator(m_heap[m_size+1], index);
     return true;
   }
 }
-
+// Return Region in parameter
 bool Irrigator::getRegion(Region & aRegion){
   
 }
-
+// Lowest valid value of n is ROOTINDEX
 bool Irrigator::getNthRegion(Region & aRegion, int n){
   
 }
@@ -231,10 +270,11 @@ void Irrigator::dump(int index){
     cout << ")";
   }
 }
+// Returns true if Region found with nth priority
 bool Irrigator::setPriorityFn(prifn_t priFn, HEAPTYPE heapType, int n){
   
 }
-
+// Returns true if Region found with nth priority
 bool Irrigator::setStructure(STRUCTURE structure, int n){
   
 }
@@ -243,19 +283,28 @@ bool Irrigator::setStructure(STRUCTURE structure, int n){
 
 // To find highest-priority Region, look at head of Region array and check if empty or not.
 // If checked Region is empty, dequeue and remove it
+// Otherwise if not empty, keep Region at its place in queue
+// Return Crop into parameter aCrop (don't allocate, use stack)
+
+// Regions w/ m_regPrior of 0 (empty) will get bubbled to top because Irrigator is a min-heap
+// When getCrop(Crop&) encounters an empty Region on way down to first non-empty Region, it deletes empty Region
+// Every time this function runs, it will delete all empty Regions that have bubbled to top
 bool Irrigator::getCrop(Crop & aCrop){
   
 }
 
 void Irrigator::heapifyIrrigator(Region aRegion, int& index) {
-  int parentIndex = (index-1)/2;
-  // base case: current Region and index are root of array (index 0)
-  if (index == 0) {
+  // base case: current Region and index are root of array (index 1)
+  if (index == 1) {
     return;
   }
+
+  // slight variation on parent index formula because the array of Regions leaves index 0 unused
+  int parentIndex = ((index-1)/2)+1;
+
   Region parent = m_heap[parentIndex];
   
-  if (parent.m_regPrior < aRegion.m_regPrior) {
+  if (parent.m_regPrior > aRegion.m_regPrior) {
     Region temp = parent;
     m_heap[parentIndex] = aRegion;
     m_heap[index] = temp;
