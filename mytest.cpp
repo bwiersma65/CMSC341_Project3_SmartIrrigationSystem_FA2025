@@ -143,13 +143,6 @@ class Tester{
         bool test_Constructor_MinHeap_Leftist_Normal() {
             //////////////////////Random Generators////////////////////////
             Random regionGen(1,30);
-            Random idGen(MINCROPID,MAXCROPID);
-            Random temperatureGen(MINTEMP,MAXTEMP);
-            int temperature = temperatureGen.getRandNum();
-            Random moistureGen(MINMOISTURE,MAXMOISTURE);
-            Random timeGen(MINTIME,MAXTIME);
-            int time = timeGen.getRandNum();
-            Random typeGen(MINTYPE,MAXTYPE);
             ///////////////////////////////////////////////////////////////
 
             cout << "Creating 1 region w/ Leftist min-heap" << endl;
@@ -159,6 +152,22 @@ class Tester{
             cout << "Checking if Region members match constructor arguments and default values" << endl;
             if ((aRegion.m_priorFunc == priorityFn2) && (aRegion.m_heapType == MINHEAP) 
                 && (aRegion.m_structure == LEFTIST) && (aRegion.m_regPrior == rndRegion)
+                && (aRegion.m_heap == nullptr) && (aRegion.m_size == 0)) {
+                    return true;
+            }
+            else {
+                return false;
+            }
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_Constructor_MinHeap_Leftist_Edge() {
+
+            cout << "Creating 1 region w/ invalid region priority" << endl;
+            Region aRegion(priorityFn2, MINHEAP, LEFTIST, 0);
+
+            cout << "Checking if Region members correctly initialized to default values" << endl;
+            if ((aRegion.m_priorFunc == nullptr) && (aRegion.m_heapType == NOTYPE) 
+                && (aRegion.m_structure == NOSTRUCT) && (aRegion.m_regPrior == 0)
                 && (aRegion.m_heap == nullptr) && (aRegion.m_size == 0)) {
                     return true;
             }
@@ -935,12 +944,12 @@ int main() {
     cout << "Checking Region parameterized constructor: edge case" << endl << endl;
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking with Leftist min-heap" << endl;
-    if (test.test_AssignmentOperator_EmptyHeap_Edge()) {
-        cout << "test_AssignmentOperator_EmptyHeap_Edge has PASSED" << endl << endl;
+    if (test.test_Constructor_MinHeap_Leftist_Edge()) {
+        cout << "test_Constructor_MinHeap_Leftist_Edge has PASSED" << endl << endl;
     }
     else {
         passed = false;
-        cout << "test_AssignmentOperator_EmptyHeap_Edge has FAILED" << endl << endl;
+        cout << "test_Constructor_MinHeap_Leftist_Edge has FAILED" << endl << endl;
     }
  /////////////////////////////////////////////////////////////////////////////////////////////
 
