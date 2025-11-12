@@ -556,6 +556,53 @@ class Tester{
             return isMinHeap;
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_getNextCrop_MaxHeap_Leftist_Normal() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ Leftist max-heap" << endl;
+            Region aHeap(priorityFn1, MAXHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+            aHeap.dump();
+
+            cout << "Removing root, comparing priority to next root, and checking heapness of heap after removal" << endl;
+            Crop temp;
+            bool isMaxHeap;
+
+            temp = aHeap.getNextCrop();
+            while (aHeap.m_heap != nullptr) {
+                if (priorityFn2(temp) < priorityFn2(*(aHeap.m_heap))) {
+                    isMaxHeap = false;
+                }
+
+                delete &temp;
+
+                isMaxHeap = checkHeapness(&aHeap);
+
+                temp = aHeap.getNextCrop();
+            }
+            delete &temp;
+
+            return isMaxHeap;
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool checkHeapness (Region* heap) const {
             if (heap->getHeapType() == MINHEAP) {
                 bool isMinHeap = true;
@@ -848,21 +895,21 @@ int main() {
     cout << "Checking Region getNextCrop: normal cases" << endl << endl;
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking removal from Leftist min-heap" << endl;
-    if (test.test_InsertCrop_MinHeap_Leftist_Normal()) {
-        cout << "test_InsertCrop_MinHeap_Leftist_Normal has PASSED" << endl << endl;
+    if (test.test_getNextCrop_MinHeap_Leftist_Normal()) {
+        cout << "test_getNextCrop_MinHeap_Leftist_Normal has PASSED" << endl << endl;
     }
     else {
         passed = false;
-        cout << "test_InsertCrop_MinHeap_Leftist_Normal has FAILED" << endl << endl;
+        cout << "test_getNextCrop_MinHeap_Leftist_Normal has FAILED" << endl << endl;
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking removal from Leftist max-heap" << endl;
-    if (test.test_InsertCrop_MaxHeap_Leftist_Normal()) {
-        cout << "test_InsertCrop_MaxHeap_Leftist_Normal has PASSED" << endl << endl;
+    if (test.test_getNextCrop_MaxHeap_Leftist_Normal()) {
+        cout << "test_getNextCrop_MaxHeap_Leftist_Normal has PASSED" << endl << endl;
     }
     else {
         passed = false;
-        cout << "test_InsertCrop_MaxHeap_Leftist_Normal has FAILED" << endl << endl;
+        cout << "test_getNextCrop_MaxHeap_Leftist_Normal has FAILED" << endl << endl;
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
