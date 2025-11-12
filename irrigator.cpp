@@ -146,7 +146,7 @@ prifn_t Region::getPriorityFn() const {
 }
 
 // This should remove the highest priority Crop (root of heap, at m_heap), merge the resultant left and right
-// subtrees together, and return the removed Crop as an object
+// subheaps together, and return the removed Crop as an object
 // If the heap is empty when this function is called, throw an out_of_range exception
 Crop Region::getNextCrop() {
   // Check if the heap is empty
@@ -154,7 +154,15 @@ Crop Region::getNextCrop() {
     throw out_of_range("Crop queue is empty in this Region");
   }
   else {
-
+    // store highest priority Crop in temp holder
+    Crop* temp = m_heap;
+    // merge left and right subheaps and store as new m_heap
+    m_heap = merge(m_heap->m_left, m_heap->m_right);
+    // unlink highest priority Crop from former children
+    temp->m_left = nullptr;
+    temp->m_right = nullptr;
+    // Return dereferenced Crop object
+    return *temp;
   }
 }
 
