@@ -48,10 +48,10 @@ void Region::clear() {
 }
 /*
 Copy constructor
-Take deep-copy of parameter Region and its heap
+Takes deep-copies of parameter Region's members including its heap
 Builds this object's heap by copying rhs heap in pre-order fashion
 */
-// Edge case: copy empty object (rhs is empty)
+// Edge case: copy empty object (rhs.m_heap is empty)
 Region::Region(const Region& rhs)
 {
   m_size = rhs.m_size;
@@ -60,8 +60,9 @@ Region::Region(const Region& rhs)
   m_structure = rhs.m_structure;
   m_regPrior = rhs.m_regPrior;
 
-
+  m_heap = copyHeap(rhs.m_heap);
 }
+
 // Edge case: copy empty object (rhs is empty)
 Region& Region::operator=(const Region& rhs) {
   // checks against self-copying; if both heap roots are the same address, they are the same Region
