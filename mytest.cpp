@@ -170,6 +170,7 @@ class Tester{
             Region copyRegion(aRegion);
             copyRegion.dump();
 
+            return checkCopy(aRegion, copyRegion);
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool testMinHeapInsertNormal() {
