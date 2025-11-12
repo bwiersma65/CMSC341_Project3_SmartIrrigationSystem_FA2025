@@ -255,18 +255,22 @@ class Tester{
         bool checkCopy(Region& aRegion, Region& copyRegion) const {
             bool isCopied = true;
 
-            // Checks if non-object members have the same value between both parameters
+            // Checks if non-object members of parameter Regions have the same values
             if ((aRegion.m_size != copyRegion.m_size) || (aRegion.m_priorFunc != copyRegion.m_priorFunc) || 
                 (aRegion.m_heapType != copyRegion.m_heapType) || (aRegion.m_structure != copyRegion.m_structure) ||
                 (aRegion.m_regPrior != copyRegion.m_regPrior))
             {
                 isCopied = false;
             }
+
             // Checks if the heaps in both parameters are copies of one another in value
             bool isCropCopied = true;
             if (!checkHeapValue(aRegion.m_heap, copyRegion.m_heap, isCropCopied)) {
                 isCopied = false;
             }
+
+            // Checks if the heaps in both parameters are copies in address
+
         }
 
         // Recursively pre-order traverses both heaps rooted in parameters, moving to same node in each tree
@@ -305,6 +309,26 @@ class Tester{
             if (aCrop->m_npl != copyCrop->m_npl) sameVal = false;
 
             return sameVal;
+        }
+
+        // Compares the addresses pointed to by both Crop* parameters
+        // If both point to the same object, a deep-copy was not properly performed
+        // Returns true if deep-copy confirmed, false if disproved
+        bool checkHeapAddress(Crop* aRoot, Crop* copyRoot, bool& isDeepCopy) const {
+            // base case
+            if ((aRoot==nullptr) && (copyRoot==nullptr)) {
+                return isDeepCopy;
+            }
+            // if both Crop* point to the same object, a deep-copy was not performed
+            if (aRoot == copyRoot) {
+                isDeepCopy = false;
+            }
+            // recurse down left subheap of Crops
+            isDeepCopy = checkHeapAddress(aRoot->m_left, copyRoot->m_left, isDeepCopy);
+            // recurse down right subtree of Crops
+            isDeepCopy = checkHeapAddress(aRoot->m_right, copyRoot->m_right, isDeepCopy);
+            // If both Crop* parameters and their children point to different addresses, this returns true
+            return isDeepCopy;
         }
 };
 
