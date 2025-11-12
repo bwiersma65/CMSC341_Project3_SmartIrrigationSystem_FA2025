@@ -358,6 +358,9 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
       // recursively call merge on p1's left child and p2; p1 and its right child have been "hung"
       p1->m_left = merge(p1->m_left, p2);
 
+      // update p1's npl after zipping up its right child
+      p1->m_npl = 1 + minNPL(p1);
+
       return p1;
     }
     ///////////////////////////////////////////////////////////////////////////////////
@@ -380,6 +383,9 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
 
       // recursively call merge on p1's left child and p2; p1 and its right child have been "hung"
       p1->m_left = merge(p1->m_left, p2);
+
+      // update p1's npl after zipping up its right child
+      p1->m_npl = 1 + minNPL(p1);
 
       return p1;
     }
