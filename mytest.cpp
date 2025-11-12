@@ -306,17 +306,10 @@ class Tester{
         bool test_CopyConstructor_EmptyHeap_Edge() {
             //////////////////////Random Generators////////////////////////
             Random regionGen(1,30);
-            Random idGen(MINCROPID,MAXCROPID);
-            Random temperatureGen(MINTEMP,MAXTEMP);
-            int temperature = temperatureGen.getRandNum();
-            Random moistureGen(MINMOISTURE,MAXMOISTURE);
-            Random timeGen(MINTIME,MAXTIME);
-            int time = timeGen.getRandNum();
-            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
             ///////////////////////////////////////////////////////////////
 
             cout << "Creating 1 region w/ Leftist min-heap" << endl;
-            int rndRegion = regionGen.getRandNum();
             Region aRegion(priorityFn2, MINHEAP, LEFTIST, rndRegion);
             cout << "Leaving Region empty" << endl;
             aRegion.dump();
@@ -395,17 +388,10 @@ class Tester{
         bool test_AssignmentOperator_EmptyHeap_Edge() {
             //////////////////////Random Generators////////////////////////
             Random regionGen(1,30);
-            Random idGen(MINCROPID,MAXCROPID);
-            Random temperatureGen(MINTEMP,MAXTEMP);
-            int temperature = temperatureGen.getRandNum();
-            Random moistureGen(MINMOISTURE,MAXMOISTURE);
-            Random timeGen(MINTIME,MAXTIME);
-            int time = timeGen.getRandNum();
-            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
             ///////////////////////////////////////////////////////////////
 
             cout << "Creating 1 region w/ Leftist min-heap" << endl;
-            int rndRegion = regionGen.getRandNum();
             Region aRegion(priorityFn2, MINHEAP, LEFTIST, rndRegion);
             cout << "Leaving Region empty" << endl;
             aRegion.dump();
@@ -606,13 +592,6 @@ class Tester{
         bool test_getNextCrop_EmptyHeap_Edge() {
             //////////////////////Random Generators////////////////////////
             Random regionGen(1,30);
-            Random idGen(MINCROPID,MAXCROPID);
-            Random temperatureGen(MINTEMP,MAXTEMP);
-            int temperature = temperatureGen.getRandNum();
-            Random moistureGen(MINMOISTURE,MAXMOISTURE);
-            Random timeGen(MINTIME,MAXTIME);
-            int time = timeGen.getRandNum();
-            Random typeGen(MINTYPE,MAXTYPE);
             int rndRegion = regionGen.getRandNum();
             ///////////////////////////////////////////////////////////////
 
@@ -630,6 +609,38 @@ class Tester{
 
             return false;
         }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_NPL_Value_MinHeap() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ Leftist min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+
+            cout << "Checking if all NPL values in Region are valid" << endl;
+            bool validNPL = true;
+            return checkNPL(aHeap.m_heap, validNPL);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////// TEST HELPER FUNCTIONS /////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool checkHeapness (Region* heap) const {
             if (heap->getHeapType() == MINHEAP) {
@@ -785,6 +796,37 @@ class Tester{
             isDeepCopy = checkHeapAddress(aRoot->m_right, copyRoot->m_right, isDeepCopy);
             // If both Crop* parameters and their children point to different addresses, this returns true
             return isDeepCopy;
+        }
+
+        bool checkNPL(Crop* node, bool& validNPL) const {
+            // base case
+            if (node == nullptr) {
+                return validNPL;
+            }
+
+            // Find the minimum NPL among node's children; empty node has NPL of -1
+            int leftNPL = -1;
+            if (node->m_left != nullptr) {
+                leftNPL = node->m_left->m_npl;
+            }
+
+            int rightNPL = -1;
+            if (node->m_right != nullptr) {
+                rightNPL = node->m_right->m_npl;
+            }
+
+            int minNPL;
+            if (leftNPL > rightNPL) minNPL = rightNPL;
+            else minNPL = leftNPL;
+
+            // If node NPL is not 1 more than minimum NPL of its children, its NPL is invalid
+            if (node->m_npl != (minNPL + 1)) validNPL = false;
+
+            validNPL = checkNPL(node->m_left, validNPL);
+
+            validNPL = checkNPL(node->m_right, validNPL);
+
+            return validNPL;
         }
 };
 
@@ -953,6 +995,16 @@ int main() {
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+    cout << "Checking if all Crops in a Leftist min-heap have correct NPLs" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    if (test.test_NPL_Value_MinHeap()) {
+        cout << "test_NPL_Value_MinHeap has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_NPL_Value_MinHeap has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
 
     if (passed) {
         cout << endl << "All tests passed! Yippee!" << endl;
