@@ -140,6 +140,33 @@ int priorityFn2(const Crop &crop);// works with a MINHEAP
 class Tester{
     public:
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_Constructor_MinHeap_Leftist_Normal() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 region w/ Leftist min-heap" << endl;
+            int rndRegion = regionGen.getRandNum();
+            Region aRegion(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+
+            cout << "Checking if Region members match constructor arguments and default values" << endl;
+            if ((aRegion.m_priorFunc == priorityFn2) && (aRegion.m_heapType == MINHEAP) 
+                && (aRegion.m_structure == LEFTIST) && (aRegion.m_regPrior == rndRegion)
+                && (aRegion.m_heap == nullptr) && (aRegion.m_size == 0)) {
+                    return true;
+            }
+            else {
+                return false;
+            }
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool test_CopyConstructor_MinHeap_Leftist_Normal() {
             //////////////////////Random Generators////////////////////////
             Random regionGen(1,30);
@@ -892,6 +919,30 @@ int main() {
     Tester test;
 
     cout << "Testing" << endl;
+
+    cout << "Checking Region parameterized constructor: normal case" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking with Leftist min-heap" << endl;
+    if (test.test_Constructor_MinHeap_Leftist_Normal()) {
+        cout << "test_Constructor_MinHeap_Leftist_Normal has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_Constructor_MinHeap_Leftist_Normal has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+    cout << "Checking Region parameterized constructor: edge case" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking with Leftist min-heap" << endl;
+    if (test.test_AssignmentOperator_EmptyHeap_Edge()) {
+        cout << "test_AssignmentOperator_EmptyHeap_Edge has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_AssignmentOperator_EmptyHeap_Edge has FAILED" << endl << endl;
+    }
+ /////////////////////////////////////////////////////////////////////////////////////////////
 
     cout << "Checking Region copy constructor: normal cases" << endl << endl;
 /////////////////////////////////////////////////////////////////////////////////////////////
