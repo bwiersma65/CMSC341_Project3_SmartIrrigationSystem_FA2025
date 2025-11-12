@@ -62,14 +62,30 @@ Region::Region(const Region& rhs)
 
   m_heap = copyHeap(rhs.m_heap);
 }
-
+/*
+Overloaded assignment operator
+Clears this Region's heap
+Sets this Region's non-object members to values of parameter's non-object members
+Deep-copies heap of parameter into this Region's heap
+Guards against self-assignment; if attempted, returns this Region without any changes
+*/
 // Edge case: copy empty object (rhs is empty)
 Region& Region::operator=(const Region& rhs) {
   // checks against self-copying; if both heap roots are the same address, they are the same Region
-  if (rhs.m_heap == m_heap) {
-    return;
+  if (&rhs != this) {
+    // Delete heap and its Crop nodes
+    this->clear();
+    // Copy non-object members
+    m_size = rhs.m_size;
+    m_priorFunc = rhs.m_priorFunc;
+    m_heapType = rhs.m_heapType;
+    m_structure = rhs.m_structure;
+    m_regPrior = rhs.m_regPrior;
+    // Copy heap by calling recursive helper
+    m_heap = copyHeap(rhs.m_heap);
   }
 
+  return *this;
 }
 void Region::mergeWithQueue(Region& rhs) {
   // checks against self-merging; if both heap roots are the same address, they are the same Region
