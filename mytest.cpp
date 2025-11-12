@@ -474,8 +474,6 @@ class Tester{
                 return isHeap;
             }
 
-            cout << "Made it to " << priorityFn2(*heap) << endl;
-
             // check if root priority is lower priority (larger number) than its children
             if (heap->m_left != nullptr) {
                 if (priorityFn2(*heap) > priorityFn2(*(heap->m_left))) {
@@ -497,19 +495,25 @@ class Tester{
 
         bool checkMaxHeapness(Crop* heap, bool& isHeap) const {
             // base case: empty node
-            if (heap == NULL) {
+            if (heap == nullptr) {
                 return isHeap;
             }
 
-            // check if root priority is lower priority (larger number) than its children
-            if ((priorityFn1(*heap) < priorityFn1((*heap->m_left))) || 
-                (priorityFn1(*heap) < priorityFn1(*(heap->m_right)))) {
+            // check if root priority is lower priority (smaller number) than its children
+            if (heap->m_left != nullptr) {
+                if (priorityFn1(*heap) < priorityFn1(*(heap->m_left))) {
                     isHeap = false;
+                }
+            }
+            if (heap->m_right != nullptr) {
+                if (priorityFn1(*heap) < priorityFn1(*(heap->m_right))) {
+                    isHeap = false;
+                }
             }
 
-            checkMinHeapness(heap->m_left, isHeap);
+            isHeap = checkMinHeapness(heap->m_left, isHeap);
 
-            checkMinHeapness(heap->m_right, isHeap);
+            isHeap = checkMinHeapness(heap->m_right, isHeap);
 
             return isHeap;
         }
