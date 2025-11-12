@@ -347,7 +347,15 @@ int main() {
 
     cout << "Testing" << endl;
 
+    cout << "Checking Region copy constructor" << endl;
+    cout << "Checking with Leftist min-heap" << endl;
 
+    if (test.testCopyConstructorMinHeapLeftistNormal()) {
+        cout << "testCopyConstructorMinHeapLeftistNormal has PASSED" << endl;
+    }
+    else {
+        cout << "testCopyConstructorMinHeapLeftistNormal has FAILED" << endl;
+    }
     
     // passed = test.testMinHeapInsertNormal();
 
@@ -358,6 +366,7 @@ int main() {
     //     cout << "testMinHeapInsertNormal failed" << endl;
     // }
     // return 0;
+    return 0;
 }
 
 int priorityFn1(const Crop &crop) {
