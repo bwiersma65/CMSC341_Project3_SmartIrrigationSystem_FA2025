@@ -116,17 +116,13 @@ bool Region::insertCrop(const Crop& crop) {
   if ((m_priorFunc==nullptr) || (m_heapType==NOTYPE) || (m_structure==NOSTRUCT) || (m_regPrior <= 0)) {
     return false;
   }
-  // checks if crop is null or not; if so, do not attempt to add to Region
-  else if (&crop == nullptr) {
-    return false;
-  }
-  // if Crop is of invalid priority value, do not add to Region heap
   else if (m_priorFunc(crop) <= 0) {
     return false;
   }
   else {
     Crop* temp = new Crop(crop.m_cropID, crop.m_temperature, crop.m_moisture, crop.m_time, crop.m_type);
     m_heap = merge(m_heap, temp);
+    m_size++;
     return true;
   }
 }
@@ -388,6 +384,9 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
       return p1;
     }
   }
+
+  // If this Region is of type NOSTRUCT or NOTYPE, return a nullptr
+  return nullptr;
 }
 
 /*
