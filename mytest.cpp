@@ -417,7 +417,7 @@ class Tester{
             return checkCopy(aRegion, copyRegion);
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool testMinHeapInsertNormal() {
+        bool test_InsertCrop_MinHeap_Leftist_Normal() {
             //////////////////////Random Generators////////////////////////
             Random regionGen(1,30);
             Random idGen(MINCROPID,MAXCROPID);
@@ -430,8 +430,11 @@ class Tester{
             int rndRegion = regionGen.getRandNum();
             ///////////////////////////////////////////////////////////////
 
-            Region aHeap(priorityFn2, MINHEAP, NOSTRUCT, rndRegion);
-            for (int i=0; i < 300; i++) {
+            cout << "Creating 1 Region w/ Leftist min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            // change back to 300
+            for (int i=0; i < 25; i++) {
                 Crop aNode(idGen.getRandNum(), 
                     temperature, 
                     moistureGen.getRandNum(), 
@@ -439,18 +442,20 @@ class Tester{
                     typeGen.getRandNum());
                 aHeap.insertCrop(aNode);
             }
-            
+            aHeap.dump();
+
+            cout << "Checking for min-heap property satisfaction at every Crop in heap" << endl;
             return checkHeapness(&aHeap);
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool checkHeapness (Region* heap) const {
             if (heap->getHeapType() == MINHEAP) {
-                bool isHeap;
-                return checkMinHeapness(heap->m_heap, isHeap);
+                bool isMinHeap = true;
+                return checkMinHeapness(heap->m_heap, isMinHeap);
             }
             else if (heap->getHeapType() == MAXHEAP) {
-                bool isHeap;
-                return checkMaxHeapness(heap->m_heap, isHeap);
+                bool isMaxHeap = true;
+                return checkMaxHeapness(heap->m_heap, isMaxHeap);
             }
             // heap is of type NOTYPE
             else {
@@ -459,25 +464,33 @@ class Tester{
         }
 
         /*
-        Takes Crop (node) pointer and reference to bool representing heapness
+        Takes Crop (node) pointer and reference to boolean representing heapness property
         Preorder traversal of tree, checking if Crop priority is lower (higher number) than that of its children
         Returns true if heap satisfies minHeap property at all nodes, false if not
         */
         bool checkMinHeapness(Crop* heap, bool& isHeap) const {
             // base case: empty node
-            if (heap == NULL) {
+            if (heap == nullptr) {
                 return isHeap;
             }
 
+            cout << "Made it to " << priorityFn2(*heap) << endl;
+
             // check if root priority is lower priority (larger number) than its children
-            if ((priorityFn2(*heap) > priorityFn2((*heap->m_left))) || 
-                (priorityFn2(*heap) > priorityFn2(*(heap->m_right)))) {
+            if (heap->m_left != nullptr) {
+                if (priorityFn2(*heap) > priorityFn2(*(heap->m_left))) {
                     isHeap = false;
+                }
+            }
+            if (heap->m_right != nullptr) {
+                if (priorityFn2(*heap) > priorityFn2(*(heap->m_right))) {
+                    isHeap = false;
+                }
             }
 
-            checkMinHeapness(heap->m_left, isHeap);
+            isHeap = checkMinHeapness(heap->m_left, isHeap);
 
-            checkMinHeapness(heap->m_right, isHeap);
+            isHeap = checkMinHeapness(heap->m_right, isHeap);
 
             return isHeap;
         }
@@ -590,7 +603,7 @@ class Tester{
 };
 
 int main() {
-    bool passed;
+    bool passed = true;
     Tester test;
 
     cout << "Testing" << endl;
@@ -599,7 +612,6 @@ int main() {
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking with Leftist min-heap" << endl;
     if (test.test_CopyConstructor_MinHeap_Leftist_Normal()) {
-        passed = true;
         cout << "test_CopyConstructor_MinHeap_Leftist_Normal has PASSED" << endl << endl;
     }
     else {
@@ -609,7 +621,6 @@ int main() {
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking with Leftist max-heap" << endl;
     if (test.test_CopyConstructor_MaxHeap_Leftist_Normal()) {
-        passed = true;
         cout << "test_CopyConstructor_MaxHeap_Leftist_Normal has PASSED" << endl << endl;
     }
     else {
@@ -619,7 +630,6 @@ int main() {
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking with Skew min-heap" << endl;
     if (test.test_CopyConstructor_MinHeap_Skew_Normal()) {
-        passed = true;
         cout << "test_CopyConstructor_MinHeap_Skew_Normal has PASSED" << endl << endl;
     }
     else {
@@ -629,7 +639,6 @@ int main() {
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking with Skew max-heap" << endl;
     if (test.test_CopyConstructor_MaxHeap_Skew_Normal()) {
-        passed = true;
         cout << "test_CopyConstructor_MaxHeap_Skew_Normal has PASSED" << endl << endl;
     }
     else {
@@ -642,7 +651,6 @@ int main() {
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking when copying Region with only 1 Crop in heap" << endl;
     if (test.test_CopyConstructor_OneNode_Edge()) {
-        passed = true;
         cout << "test_CopyConstructor_OneNode_Edge has PASSED" << endl << endl; 
     }
     else {
@@ -652,7 +660,6 @@ int main() {
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking when copying Region with empty heap" << endl;
     if (test.test_CopyConstructor_EmptyHeap_Edge()) {
-        passed = true;
         cout << "test_CopyConstructor_EmptyHeap_Edge has PASSED" << endl << endl; 
     }
     else {
@@ -665,7 +672,6 @@ int main() {
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking with Leftist min-heap" << endl;
     if (test.test_AssignmentOperator_MinHeap_Leftist_Normal()) {
-        passed = true;
         cout << "test_AssignmentOperator_MinHeap_Leftist_Normal has PASSED" << endl << endl;
     }
     else {
@@ -678,7 +684,6 @@ int main() {
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking with Leftist min-heap" << endl;
     if (test.test_AssignmentOperator_OneNode_Edge()) {
-        passed = true;
         cout << "test_AssignmentOperator_OneNode_Edge has PASSED" << endl << endl;
     }
     else {
@@ -688,24 +693,31 @@ int main() {
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking with Leftist min-heap" << endl;
     if (test.test_AssignmentOperator_EmptyHeap_Edge()) {
-        passed = true;
         cout << "test_AssignmentOperator_EmptyHeap_Edge has PASSED" << endl << endl;
     }
     else {
         passed = false;
         cout << "test_AssignmentOperator_EmptyHeap_Edge has FAILED" << endl << endl;
     }
+ /////////////////////////////////////////////////////////////////////////////////////////////
+
+    cout << "Checking Region insertCrop: normal cases" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking insertion to Leftist min-heap" << endl;
+    if (test.test_InsertCrop_MinHeap_Leftist_Normal()) {
+        cout << "test_InsertCrop_MinHeap_Leftist_Normal has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_InsertCrop_MinHeap_Leftist_Normal has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    // passed = test.testMinHeapInsertNormal();
 
-    // if (passed) {
-    //     cout << "testMinHeapInsertNormal passed" << endl;
-    // }
-    // else {
-    //     cout << "testMinHeapInsertNormal failed" << endl;
-    // }
-    // return 0;
+
+
+
     return 0;
 }
 
