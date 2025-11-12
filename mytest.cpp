@@ -252,6 +252,9 @@ class Tester{
             return isHeap;
         }
 
+        // Compares two Region parameters to determine if they are deep-copies of each other or not
+        // If this function returns true, the Regions are deep-copies (identical in value + shape, but not in memory addr)
+        // If returns false, either the Regions are not copies or they are shallow copies
         bool checkCopy(Region& aRegion, Region& copyRegion) const {
             bool isCopied = true;
 
@@ -263,14 +266,19 @@ class Tester{
                 isCopied = false;
             }
 
-            // Checks if the heaps in both parameters are copies of one another in value
+            // Checks if the heaps in both parameters are copies of one another in node values
             bool isCropCopied = true;
             if (!checkHeapValue(aRegion.m_heap, copyRegion.m_heap, isCropCopied)) {
                 isCopied = false;
             }
 
-            // Checks if the heaps in both parameters are copies in address
+            // Checks if the heaps in both parameters are deep-copies; i.e. different addresses
+            bool isDeepCopy = true;
+            if (!checkHeapAddress(aRegion.m_heap, copyRegion.m_heap, isDeepCopy)); {
+                isCopied = false;
+            }
 
+            return isCopied;
         }
 
         // Recursively pre-order traverses both heaps rooted in parameters, moving to same node in each tree
