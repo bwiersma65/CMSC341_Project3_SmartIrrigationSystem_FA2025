@@ -499,7 +499,7 @@ class Tester{
                         time,       // it is the same in the region
                         typeGen.getRandNum());
             aRegion.insertCrop(aCrop);
-            aRegion.dump();
+            //aRegion.dump();
 
             if (aRegion.m_heap==nullptr) {
                 return true;
@@ -533,7 +533,7 @@ class Tester{
                     typeGen.getRandNum());
                 aHeap.insertCrop(aNode);
             }
-            aHeap.dump();
+            //aHeap.dump();
 
             cout << "Removing root, comparing priority to next root, and checking heapness of heap after removal" << endl;
             Crop temp;
@@ -545,13 +545,13 @@ class Tester{
                     isMinHeap = false;
                 }
 
-                delete &temp;
+                //delete &temp;
 
                 isMinHeap = checkHeapness(&aHeap);
 
                 temp = aHeap.getNextCrop();
             }
-            delete &temp;
+            //delete &temp;
 
             return isMinHeap;
         }
@@ -580,7 +580,7 @@ class Tester{
                     typeGen.getRandNum());
                 aHeap.insertCrop(aNode);
             }
-            aHeap.dump();
+            //aHeap.dump();
 
             cout << "Removing root, comparing priority to next root, and checking heapness of heap after removal" << endl;
             Crop temp;
@@ -592,15 +592,43 @@ class Tester{
                     isMaxHeap = false;
                 }
 
-                delete &temp;
+                //delete &temp;
 
                 isMaxHeap = checkHeapness(&aHeap);
 
                 temp = aHeap.getNextCrop();
             }
-            delete &temp;
+            //delete &temp;
 
             return isMaxHeap;
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_getNextCrop_EmptyHeap_Edge() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ Leftist max-heap" << endl;
+            Region aHeap(priorityFn1, MAXHEAP, LEFTIST, rndRegion);
+
+            cout << "Attempting to dequeue Crop from empty Region" << endl;
+            try {
+                Crop temp = aHeap.getNextCrop();
+            }
+            catch(out_of_range& e) {
+                cout << e.what() << endl;
+                return true;
+            }
+
+            return false;
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool checkHeapness (Region* heap) const {
@@ -913,8 +941,25 @@ int main() {
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+    cout << "Checking Region getNextCrop: edge cases" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking removal from empty Region" << endl;
+    if (test.test_getNextCrop_EmptyHeap_Edge()) {
+        cout << "test_getNextCrop_EmptyHeap_Edge has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_getNextCrop_EmptyHeap_Edge has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
 
 
+    if (passed) {
+        cout << endl << "All tests passed! Yippee!" << endl;
+    }
+    else {
+        cout << endl << "All tests did not pass, but you've got this!" << endl;
+    }
     return 0;
 }
 
