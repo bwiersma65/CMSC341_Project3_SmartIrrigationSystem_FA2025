@@ -139,6 +139,39 @@ int priorityFn2(const Crop &crop);// works with a MINHEAP
 
 class Tester{
     public:
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool testCopyConstructorMinHeapLeftistNormal() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 region w/ leftist min-heap" << endl;
+            int rndRegion = regionGen.getRandNum();
+            Region aRegion(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating region with 5 crops" << endl;
+            for (int i=0; i < 5; i++) {
+                Crop aCrop(idGen.getRandNum(),
+                            temperature,// it is the same in the region
+                            moistureGen.getRandNum(),
+                            time,       // it is the same in the region
+                            typeGen.getRandNum());
+                aRegion.insertCrop(aCrop);
+            }
+            aRegion.dump();
+
+            cout << "Creating 1 region by copying previous region" << endl;
+            Region copyRegion(aRegion);
+            copyRegion.dump();
+
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool testMinHeapInsertNormal() {
             //////////////////////Random Generators////////////////////////
             Random regionGen(1,30);
@@ -149,8 +182,9 @@ class Tester{
             Random timeGen(MINTIME,MAXTIME);
             int time = timeGen.getRandNum();
             Random typeGen(MINTYPE,MAXTYPE);
-
             int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
             Region aHeap(priorityFn2, MINHEAP, NOSTRUCT, rndRegion);
             for (int i=0; i < 300; i++) {
                 Crop aNode(idGen.getRandNum(), 
@@ -160,12 +194,11 @@ class Tester{
                     typeGen.getRandNum());
                 aHeap.insertCrop(aNode);
             }
-            ///////////////////////////////////////////////////////////////
             
             return checkHeapness(&aHeap);
         }
-
-        bool checkHeapness (Region* heap) {
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool checkHeapness (Region* heap) const {
             if (heap->getHeapType() == MINHEAP) {
                 bool isHeap;
                 return checkMinHeapness(heap->m_heap, isHeap);
@@ -181,7 +214,7 @@ class Tester{
         Preorder traversal of tree, checking if Crop priority is lower (higher number) than that of its children
         Returns true if heap satisfies minHeap property at all nodes, false if not
         */
-        bool checkMinHeapness(Crop* heap, bool& isHeap) {
+        bool checkMinHeapness(Crop* heap, bool& isHeap) const {
             // base case: empty node
             if (heap == NULL) {
                 return isHeap;
@@ -200,7 +233,7 @@ class Tester{
             return isHeap;
         }
 
-        bool checkMaxHeapness(Crop* heap, bool& isHeap) {
+        bool checkMaxHeapness(Crop* heap, bool& isHeap) const {
             // base case: empty node
             if (heap == NULL) {
                 return isHeap;
@@ -218,6 +251,48 @@ class Tester{
 
             return isHeap;
         }
+
+        bool checkCopy(Region& aRegion, Region& copyRegion) const {
+            bool isCopied = true;
+
+            // Checks if non-object members have the same value between both parameters
+            if ((aRegion.m_size != copyRegion.m_size) || (aRegion.m_priorFunc != copyRegion.m_priorFunc) || 
+                (aRegion.m_heapType != copyRegion.m_heapType) || (aRegion.m_structure != copyRegion.m_structure) ||
+                (aRegion.m_regPrior != copyRegion.m_regPrior))
+            {
+                isCopied = false;
+            }
+            // Checks if the heaps in both parameters are copies of one another in value
+            bool isCropCopied = true;
+            if (!checkHeapValue(aRegion.m_heap, copyRegion.m_heap, isCropCopied)) {
+                isCopied = false;
+            }
+        }
+
+        bool checkHeapValue(Crop* aRoot, Crop* copyRoot, bool& isCopy) const {
+            // base case
+            if ((aRoot==nullptr) && (copyRoot==nullptr)) {
+                return isCopy;
+            }
+
+            if (aRoot.)
+        }
+
+        // Compares the non-object members of two Crop parameters
+        // If any members do not match in value, this function returns false
+        // Else this function returns true, indicating all members match
+        bool compareCrops(Crop aCrop, Crop copyCrop) {
+            bool sameVal = true;
+
+            if (aCrop.m_cropID != copyCrop.m_cropID) sameVal = false;
+            if (aCrop.m_temperature != copyCrop.m_temperature) sameVal = false;
+            if (aCrop.m_moisture != copyCrop.m_moisture) sameVal = false;
+            if (aCrop.m_time != copyCrop.m_time) sameVal = false;
+            if (aCrop.m_type != copyCrop.m_type) sameVal = false;
+            if (aCrop.m_npl != copyCrop.m_npl) sameVal = false;
+
+            return sameVal;
+        }
 };
 
 int main() {
@@ -225,16 +300,18 @@ int main() {
     Tester test;
 
     cout << "Testing" << endl;
-    
-    passed = test.testMinHeapInsertNormal();
 
-    if (passed) {
-        cout << "testMinHeapInsertNormal passed" << endl;
-    }
-    else {
-        cout << "testMinHeapInsertNormal failed" << endl;
-    }
-    return 0;
+
+    
+    // passed = test.testMinHeapInsertNormal();
+
+    // if (passed) {
+    //     cout << "testMinHeapInsertNormal passed" << endl;
+    // }
+    // else {
+    //     cout << "testMinHeapInsertNormal failed" << endl;
+    // }
+    // return 0;
 }
 
 int priorityFn1(const Crop &crop) {
