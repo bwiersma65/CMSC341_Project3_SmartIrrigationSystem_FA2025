@@ -269,27 +269,40 @@ class Tester{
             }
         }
 
+        // Recursively pre-order traverses both heaps rooted in parameters, moving to same node in each tree
+        // If any Crop node in heap does not match its cousin in other heap, isCopy parameter is set to false
+        // If isCopy returns true, both parameter heaps are identical in value and shape
+        // If isCopy returns false, the parameter heaps are not identical
         bool checkHeapValue(Crop* aRoot, Crop* copyRoot, bool& isCopy) const {
             // base case
             if ((aRoot==nullptr) && (copyRoot==nullptr)) {
                 return isCopy;
             }
-
-            if (aRoot.)
+            // if the non-object data members of both parameter Crops do not match, the two heaps are not copies
+            if (!compareCrops(aRoot, copyRoot)) {
+                isCopy = false;
+            }
+            // recurse down left subheap of Crops
+            isCopy = checkHeapValue(aRoot->m_left, copyRoot->m_left, isCopy);
+            // recurse down right subtree of Crops
+            isCopy = checkHeapValue(aRoot->m_right, copyRoot->m_right, isCopy);
+            // if all Crops match so far, this returns true
+            // if there have been any mismatches reflecting parameters not being copies value-wise, this returns false
+            return isCopy;
         }
 
         // Compares the non-object members of two Crop parameters
         // If any members do not match in value, this function returns false
         // Else this function returns true, indicating all members match
-        bool compareCrops(Crop aCrop, Crop copyCrop) {
+        bool compareCrops(Crop* aCrop, Crop* copyCrop) const {
             bool sameVal = true;
 
-            if (aCrop.m_cropID != copyCrop.m_cropID) sameVal = false;
-            if (aCrop.m_temperature != copyCrop.m_temperature) sameVal = false;
-            if (aCrop.m_moisture != copyCrop.m_moisture) sameVal = false;
-            if (aCrop.m_time != copyCrop.m_time) sameVal = false;
-            if (aCrop.m_type != copyCrop.m_type) sameVal = false;
-            if (aCrop.m_npl != copyCrop.m_npl) sameVal = false;
+            if (aCrop->m_cropID != copyCrop->m_cropID) sameVal = false;
+            if (aCrop->m_temperature != copyCrop->m_temperature) sameVal = false;
+            if (aCrop->m_moisture != copyCrop->m_moisture) sameVal = false;
+            if (aCrop->m_time != copyCrop->m_time) sameVal = false;
+            if (aCrop->m_type != copyCrop->m_type) sameVal = false;
+            if (aCrop->m_npl != copyCrop->m_npl) sameVal = false;
 
             return sameVal;
         }
