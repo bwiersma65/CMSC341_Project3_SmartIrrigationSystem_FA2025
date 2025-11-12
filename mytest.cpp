@@ -640,6 +640,36 @@ class Tester{
             return checkNPL(aHeap.m_heap, validNPL);
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_Leftist_Property_MinHeap() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ Leftist min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+
+            cout << "Checking if Leftist property is preserved through Region" << endl;
+            bool isLeftist = true;
+            return checkLeftist(aHeap.m_heap, isLeftist);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////// TEST HELPER FUNCTIONS /////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool checkHeapness (Region* heap) const {
@@ -828,6 +858,33 @@ class Tester{
 
             return validNPL;
         }
+
+        bool checkLeftist(Crop* node, bool& isLeftist) const {
+            // base case
+            if (node == nullptr) {
+                return isLeftist;
+            }
+
+            // calculate children NPLs (-1 if empty)
+            int leftNPL = -1;
+            if (node->m_left != nullptr) {
+                leftNPL = node->m_left->m_npl;
+            }
+
+            int rightNPL = -1;
+            if (node->m_right != nullptr) {
+                rightNPL = node->m_right->m_npl;
+            }
+
+            // test Leftist property, i.e. if left NPL is greater than or equal to right NPL
+            if (leftNPL < rightNPL) isLeftist = false;
+
+            isLeftist = checkLeftist(node->m_left, isLeftist);
+
+            isLeftist = checkLeftist(node->m_right, isLeftist);
+
+            return isLeftist;
+        }
 };
 
 int main() {
@@ -1003,6 +1060,17 @@ int main() {
     else {
         passed = false;
         cout << "test_NPL_Value_MinHeap has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+    cout << "Checking if all Crops in a Leftist min-heap satisfy Leftist property" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    if (test.test_Leftist_Property_MinHeap()) {
+        cout << "test_Leftist_Property_MinHeap has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_Leftist_Property_MinHeap has FAILED" << endl << endl;
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
