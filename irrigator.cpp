@@ -161,6 +161,7 @@ Crop Region::getNextCrop() {
     // unlink highest priority Crop from former children
     temp->m_left = nullptr;
     temp->m_right = nullptr;
+    temp->m_npl = 0;
     // Return dereferenced Crop object
     return *temp;
   }
