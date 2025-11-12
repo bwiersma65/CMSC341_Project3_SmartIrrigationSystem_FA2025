@@ -220,7 +220,7 @@ class Tester{
 
             cout << "Creating 1 region w/ Leftist max-heap" << endl;
             int rndRegion = regionGen.getRandNum();
-            Region aRegion(priorityFn2, MAXHEAP, LEFTIST, rndRegion);
+            Region aRegion(priorityFn1, MAXHEAP, LEFTIST, rndRegion);
             cout << "Populating region with 5 crops" << endl;
             for (int i=0; i < 5; i++) {
                 Crop aCrop(idGen.getRandNum(),
@@ -253,7 +253,7 @@ class Tester{
 
             cout << "Creating 1 region w/ Skew max-heap" << endl;
             int rndRegion = regionGen.getRandNum();
-            Region aRegion(priorityFn2, MAXHEAP, SKEW, rndRegion);
+            Region aRegion(priorityFn1, MAXHEAP, SKEW, rndRegion);
             cout << "Populating region with 5 crops" << endl;
             for (int i=0; i < 5; i++) {
                 Crop aCrop(idGen.getRandNum(),
@@ -267,6 +267,151 @@ class Tester{
 
             cout << "Creating 1 region by copying previous region" << endl;
             Region copyRegion(aRegion);
+            copyRegion.dump();
+
+            return checkCopy(aRegion, copyRegion);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_CopyConstructor_OneNode_Edge() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 region w/ Leftist min-heap" << endl;
+            int rndRegion = regionGen.getRandNum();
+            Region aRegion(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating region with 1 crop" << endl;
+            Crop aCrop(idGen.getRandNum(),
+                        temperature,// it is the same in the region
+                        moistureGen.getRandNum(),
+                        time,       // it is the same in the region
+                        typeGen.getRandNum());
+            aRegion.insertCrop(aCrop);
+            aRegion.dump();
+
+            cout << "Creating 1 region by copying previous region" << endl;
+            Region copyRegion(aRegion);
+            copyRegion.dump();
+
+            return checkCopy(aRegion, copyRegion);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_CopyConstructor_EmptyHeap_Edge() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 region w/ Leftist min-heap" << endl;
+            int rndRegion = regionGen.getRandNum();
+            Region aRegion(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Leaving Region empty" << endl;
+            aRegion.dump();
+
+            cout << "Creating 1 region by copying previous region" << endl;
+            Region copyRegion(aRegion);
+            copyRegion.dump();
+
+            return checkCopy(aRegion, copyRegion);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_AssignmentOperator_MinHeap_Leftist_Normal() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 region w/ Leftist min-heap" << endl;
+            int rndRegion = regionGen.getRandNum();
+            Region aRegion(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating region with 5 crops" << endl;
+            for (int i=0; i < 5; i++) {
+                Crop aCrop(idGen.getRandNum(),
+                            temperature,// it is the same in the region
+                            moistureGen.getRandNum(),
+                            time,       // it is the same in the region
+                            typeGen.getRandNum());
+                aRegion.insertCrop(aCrop);
+            }
+            aRegion.dump();
+
+            cout << "Creating 1 region by copying previous region via assignment operator" << endl;
+            Region copyRegion = aRegion;
+            copyRegion.dump();
+
+            return checkCopy(aRegion, copyRegion);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_AssignmentOperator_OneNode_Edge() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 region w/ Leftist min-heap" << endl;
+            int rndRegion = regionGen.getRandNum();
+            Region aRegion(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating region with 1 crop" << endl;
+            Crop aCrop(idGen.getRandNum(),
+                        temperature,// it is the same in the region
+                        moistureGen.getRandNum(),
+                        time,       // it is the same in the region
+                        typeGen.getRandNum());
+            aRegion.insertCrop(aCrop);
+            aRegion.dump();
+
+            cout << "Creating 1 region by copying previous region via assignment operator" << endl;
+            Region copyRegion = aRegion;
+            copyRegion.dump();
+
+            return checkCopy(aRegion, copyRegion);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_AssignmentOperator_EmptyHeap_Edge() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 region w/ Leftist min-heap" << endl;
+            int rndRegion = regionGen.getRandNum();
+            Region aRegion(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Leaving Region empty" << endl;
+            aRegion.dump();
+
+            cout << "Creating 1 region by copying previous region via assignment operator" << endl;
+            Region copyRegion = aRegion;
             copyRegion.dump();
 
             return checkCopy(aRegion, copyRegion);
@@ -450,7 +595,7 @@ int main() {
 
     cout << "Testing" << endl;
 
-    cout << "Checking Region copy constructor" << endl;
+    cout << "Checking Region copy constructor: normal cases" << endl << endl;
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking with Leftist min-heap" << endl;
     if (test.test_CopyConstructor_MinHeap_Leftist_Normal()) {
@@ -491,7 +636,67 @@ int main() {
         passed = false;
         cout << "test_CopyConstructor_MaxHeap_Skew_Normal has FAILED" << endl << endl;
     }
-    
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+    cout << "Checking Region copy constructor: edge cases" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking when copying Region with only 1 Crop in heap" << endl;
+    if (test.test_CopyConstructor_OneNode_Edge()) {
+        passed = true;
+        cout << "test_CopyConstructor_OneNode_Edge has PASSED" << endl << endl; 
+    }
+    else {
+        passed = false;
+        cout << "test_CopyConstructor_OneNode_Edge has FAILED" << endl << endl; 
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking when copying Region with empty heap" << endl;
+    if (test.test_CopyConstructor_EmptyHeap_Edge()) {
+        passed = true;
+        cout << "test_CopyConstructor_EmptyHeap_Edge has PASSED" << endl << endl; 
+    }
+    else {
+        passed = false;
+        cout << "test_CopyConstructor_EmptyHeap_Edge has FAILED" << endl << endl; 
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+    cout << "Checking Region assignment operator: normal cases" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking with Leftist min-heap" << endl;
+    if (test.test_AssignmentOperator_MinHeap_Leftist_Normal()) {
+        passed = true;
+        cout << "test_AssignmentOperator_MinHeap_Leftist_Normal has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_AssignmentOperator_MinHeap_Leftist_Normal has FAILED" << endl << endl;
+    }
+ /////////////////////////////////////////////////////////////////////////////////////////////
+
+    cout << "Checking Region assignment operator: edge cases" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking with Leftist min-heap" << endl;
+    if (test.test_AssignmentOperator_OneNode_Edge()) {
+        passed = true;
+        cout << "test_AssignmentOperator_OneNode_Edge has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_AssignmentOperator_OneNode_Edge has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking with Leftist min-heap" << endl;
+    if (test.test_AssignmentOperator_EmptyHeap_Edge()) {
+        passed = true;
+        cout << "test_AssignmentOperator_EmptyHeap_Edge has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_AssignmentOperator_EmptyHeap_Edge has FAILED" << endl << endl;
+    }
+
+
     // passed = test.testMinHeapInsertNormal();
 
     // if (passed) {
