@@ -433,8 +433,7 @@ class Tester{
             cout << "Creating 1 Region w/ Leftist min-heap" << endl;
             Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
             cout << "Populating Region with 300 Crops" << endl;
-            // change back to 300
-            for (int i=0; i < 25; i++) {
+            for (int i=0; i < 300; i++) {
                 Crop aNode(idGen.getRandNum(), 
                     temperature, 
                     moistureGen.getRandNum(), 
@@ -446,6 +445,68 @@ class Tester{
 
             cout << "Checking for min-heap property satisfaction at every Crop in heap" << endl;
             return checkHeapness(&aHeap);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_InsertCrop_MaxHeap_Leftist_Normal() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ Leftist max-heap" << endl;
+            Region aHeap(priorityFn1, MAXHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+            aHeap.dump();
+
+            cout << "Checking for max-heap property satisfaction at every Crop in heap" << endl;
+            return checkHeapness(&aHeap);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_InsertCrop_InvalidRegion_Edge() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ NOSTRUCT structure" << endl;
+            Region aRegion(priorityFn2, MINHEAP, NOSTRUCT, rndRegion);
+            cout << "Populating region with 1 crop" << endl;
+            Crop aCrop(idGen.getRandNum(),
+                        temperature,// it is the same in the region
+                        moistureGen.getRandNum(),
+                        time,       // it is the same in the region
+                        typeGen.getRandNum());
+            aRegion.insertCrop(aCrop);
+            aRegion.dump();
+
+            if (aRegion.m_heap==nullptr) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool checkHeapness (Region* heap) const {
@@ -498,7 +559,6 @@ class Tester{
             if (heap == nullptr) {
                 return isHeap;
             }
-
             // check if root priority is lower priority (smaller number) than its children
             if (heap->m_left != nullptr) {
                 if (priorityFn1(*heap) < priorityFn1(*(heap->m_left))) {
@@ -511,9 +571,9 @@ class Tester{
                 }
             }
 
-            isHeap = checkMinHeapness(heap->m_left, isHeap);
+            isHeap = checkMaxHeapness(heap->m_left, isHeap);
 
-            isHeap = checkMinHeapness(heap->m_right, isHeap);
+            isHeap = checkMaxHeapness(heap->m_right, isHeap);
 
             return isHeap;
         }
@@ -716,8 +776,26 @@ int main() {
         cout << "test_InsertCrop_MinHeap_Leftist_Normal has FAILED" << endl << endl;
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking insertion to Leftist max-heap" << endl;
+    if (test.test_InsertCrop_MaxHeap_Leftist_Normal()) {
+        cout << "test_InsertCrop_MaxHeap_Leftist_Normal has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_InsertCrop_MaxHeap_Leftist_Normal has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
 
-
+    cout << "Checking Region insertCrop: edge cases" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking insertion of invalid Crop to Region" << endl;
+    if (test.test_InsertCrop_MinHeap_Leftist_Normal()) {
+        cout << "test_InsertCrop_MinHeap_Leftist_Normal has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_InsertCrop_MinHeap_Leftist_Normal has FAILED" << endl << endl;
+    }
 
 
 
