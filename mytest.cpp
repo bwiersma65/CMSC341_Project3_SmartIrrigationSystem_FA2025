@@ -208,6 +208,10 @@ class Tester{
                 bool isHeap;
                 return checkMaxHeapness(heap->m_heap, isHeap);
             }
+            // heap is of type NOTYPE
+            else {
+                return false;
+            }
         }
 
         /*
@@ -275,7 +279,7 @@ class Tester{
 
             // Checks if the heaps in both parameters are deep-copies; i.e. different addresses
             bool isDeepCopy = true;
-            if (!checkHeapAddress(aRegion.m_heap, copyRegion.m_heap, isDeepCopy)); {
+            if (!checkHeapAddress(aRegion.m_heap, copyRegion.m_heap, isDeepCopy)) {
                 isCopied = false;
             }
 
@@ -351,9 +355,11 @@ int main() {
     cout << "Checking with Leftist min-heap" << endl;
 
     if (test.testCopyConstructorMinHeapLeftistNormal()) {
+        passed = true;
         cout << "testCopyConstructorMinHeapLeftistNormal has PASSED" << endl;
     }
     else {
+        passed = false;
         cout << "testCopyConstructorMinHeapLeftistNormal has FAILED" << endl;
     }
     
