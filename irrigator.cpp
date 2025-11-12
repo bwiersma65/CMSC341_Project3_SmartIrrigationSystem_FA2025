@@ -9,14 +9,15 @@ Region::Region(){
   m_structure = NOSTRUCT;
   m_regPrior = 0;
 }
+
 // creates empty Region specified by parameters
 Region::Region(prifn_t priFn, HEAPTYPE heapType, STRUCTURE structure, int regPrior)
 {
   m_heap = nullptr;
   m_size = 0;
 
-  // if ((heapType == NOTYPE) || (structure == NOSTRUCT) || (regPrior <= 0)) {
-  if ((heapType == NOTYPE) || (structure == NOSTRUCT)) {
+  if ((heapType == NOTYPE) || (structure == NOSTRUCT) || (regPrior <= 0)) {
+ // if ((heapType == NOTYPE) || (structure == NOSTRUCT)) {
     m_priorFunc = nullptr;
     m_heapType = NOTYPE;
     m_structure = NOSTRUCT;
@@ -29,11 +30,13 @@ Region::Region(prifn_t priFn, HEAPTYPE heapType, STRUCTURE structure, int regPri
     m_regPrior = regPrior;
   }
 }
+
 // Deallocates memory and re-initializes member variables
 Region::~Region()
 {
   this->clear();
 }
+
 // FIX ME
 // Clears the queue; delete all nodes in heap leaving it empty, and re-initialize member variables
 void Region::clear() {
@@ -46,6 +49,7 @@ void Region::clear() {
   m_structure = NOSTRUCT;
   m_regPrior = 0;    
 }
+
 /*
 Copy constructor
 Takes deep-copies of parameter Region's members including its heap
@@ -62,6 +66,7 @@ Region::Region(const Region& rhs)
 
   m_heap = copyHeap(rhs.m_heap);
 }
+
 /*
 Overloaded assignment operator
 Clears this Region's heap
@@ -87,6 +92,7 @@ Region& Region::operator=(const Region& rhs) {
 
   return *this;
 }
+
 void Region::mergeWithQueue(Region& rhs) {
   // checks against self-merging; if both heap roots are the same address, they are the same Region
   if (rhs.m_heap == m_heap) {
@@ -103,6 +109,7 @@ void Region::mergeWithQueue(Region& rhs) {
     return;
   }
 }
+
 // Add check for if crop argument is nullptr
 bool Region::insertCrop(const Crop& crop) {
   // if any of Region members are set to invalid values, do not add Crop to Region
@@ -118,9 +125,12 @@ bool Region::insertCrop(const Crop& crop) {
     return false;
   }
   else {
-
+    Crop* temp = new Crop(crop.m_cropID, crop.m_temperature, crop.m_moisture, crop.m_time, crop.m_type);
+    m_heap = merge(m_heap, temp);
+    return true;
   }
 }
+
 /*
 uses private helper countCrops to recursively preorder traverse heap and increment counter for each non-null node
 returns number of Crops in heap
@@ -134,9 +144,11 @@ int Region::numCrops() const
   // returns number of non-null nodes visited in heap tree
   return numCrops;
 }
+
 prifn_t Region::getPriorityFn() const {
   return m_priorFunc;
 }
+
 // This should remove the highest priority Crop (root of heap, at m_heap), merge the resultant left and right
 // subtrees together, and return the removed Crop as an object
 // If the heap is empty when this function is called, throw an out_of_range exception
@@ -149,6 +161,7 @@ Crop Region::getNextCrop() {
 
   }
 }
+
 // Change the m_priorFunc and heapType members for the object to values of respective parameters
 // if they differ from the previous values, rebuild the heap using the new ones (by using merge helper)
 // Do not reallocate new memory, just reuse the pre-existing nodes
@@ -163,6 +176,7 @@ void Region::setPriorityFn(prifn_t priFn, HEAPTYPE heapType) {
 
   }
 }
+
 // Change the m_structure member for the object to value of parameter
 // if it differs from the previous value, rebuild the heap using the new one
 // Do not reallocate new memory, just reuse the pre-existing nodes
@@ -187,6 +201,7 @@ void Region::setStructure(STRUCTURE structure){
     }
   }
 }
+
 STRUCTURE Region::getStructure() const {
   return m_structure;
 }
@@ -206,6 +221,7 @@ void Region::dump() const {
   }
   cout << endl;
 }
+
 void Region::dump(Crop *pos) const {
   if ( pos != nullptr ) {
     cout << "(";
@@ -227,6 +243,10 @@ ostream& operator<<(ostream& sout, const Crop& crop) {
         << ", plant type: " << crop.getTypeString();
   return sout;
 }
+
+    /****************************************
+     * Helper function definitions go here! *
+     ****************************************/
 
 /*
 Traverses the heap in pre-order fashion, incrementing for every non-null node found
