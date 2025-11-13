@@ -164,6 +164,8 @@ class Region{
      * Private function declarations go here! *
      ******************************************/
 
+     void printCrop(Crop* node) const;
+
      void countCrops(Crop* node, int& numCrops) const;
 
      Crop* merge(Crop* p1, Crop* p2);
