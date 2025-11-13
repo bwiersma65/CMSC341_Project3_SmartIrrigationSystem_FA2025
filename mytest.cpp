@@ -946,7 +946,7 @@ class Tester{
             }
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool test_mergeWithQueue_RHS_Empty_Normal() {
+        bool test_mergeWithQueue_PostMerge_RHS_Empty_Normal() {
             //////////////////////Random Generators////////////////////////
             Random regionGen(1,30);
             Random idGen(MINCROPID,MAXCROPID);
@@ -994,7 +994,7 @@ class Tester{
             }
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool test_mergeWithQueue_Edge() {
+        bool test_mergeWithQueue_PreMerge_RHS_Empty_Edge() {
             //////////////////////Random Generators////////////////////////
             Random regionGen(1,30);
             Random idGen(MINCROPID,MAXCROPID);
@@ -1007,10 +1007,10 @@ class Tester{
             int rndRegion = regionGen.getRandNum();
             ///////////////////////////////////////////////////////////////
 
-            cout << "Creating 1 Region w/ Skew min-heap" << endl;
-            Region aHeap(priorityFn2, MINHEAP, SKEW, rndRegion);
-            cout << "Populating Region with 20 Crops" << endl;
-            for (int i=0; i < 20; i++) {
+            cout << "Creating 1 Region w/ Leftist min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
                 Crop aNode(idGen.getRandNum(), 
                     temperature, 
                     moistureGen.getRandNum(), 
@@ -1019,9 +1019,104 @@ class Tester{
                 aHeap.insertCrop(aNode);
             }
 
-            aHeap.printCropsQueue();
+            cout << "Creating 1 empty Region w/ Leftist min-heap" << endl;
+            Region bHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
 
-            return true;
+            // Create new Region copied from original Region
+            Region oldHeap(aHeap);
+
+            cout << "Merging non-empty Region heap with empty Region heap" << endl;
+            aHeap.mergeWithQueue(bHeap);
+
+            cout << "Checking if non-empty Region heap is unchanged after merge with empty heap" << endl;
+            return checkCopy(oldHeap, aHeap);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_mergeWithQueue_Empty_LHS_Edge() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 empty Region w/ Leftist min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+
+            cout << "Creating 1 Region w/ Leftist min-heap" << endl;
+            Region bHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                bHeap.insertCrop(aNode);
+            }
+
+            // Create new Region copied from rhs non-empty Region
+            Region oldHeap(bHeap);
+
+            cout << "Merging empty Region heap with non-empty Region heap" << endl;
+            aHeap.mergeWithQueue(bHeap);
+
+            cout << "Checking if heap is now non-empty heap" << endl;
+            return checkCopy(oldHeap, aHeap);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_mergeWithQueue_Mismatch_Edge() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ Leftist min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+
+            cout << "Creating 1 Region w/ Leftist max-heap" << endl;
+            Region bHeap(priorityFn1, MAXHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                bHeap.insertCrop(aNode);
+            }
+
+            cout << "Merging both Regions" << endl;
+            try {
+                aHeap.mergeWithQueue(bHeap);
+            }
+            catch(domain_error& e) {
+                cout << e.what() << endl;
+                return true;
+            }
+
+            return false;
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////// TEST HELPER FUNCTIONS /////////////////
@@ -1514,12 +1609,42 @@ int main() {
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
     cout << "Checking if right-hand side Region's heap is emptied properly after merge" << endl;
-    if (test.test_mergeWithQueue_RHS_Empty_Normal()) {
-        cout << "test_mergeWithQueue_RHS_Empty_Normal has PASSED" << endl << endl;
+    if (test.test_mergeWithQueue_PostMerge_RHS_Empty_Normal()) {
+        cout << "test_mergeWithQueue_PostMerge_RHS_Empty_Normal has PASSED" << endl << endl;
     }
     else {
         passed = false;
-        cout << "test_mergeWithQueue_RHS_Empty_Normal has FAILED" << endl << endl;
+        cout << "test_mergeWithQueue_PostMerge_RHS_Empty_Normal has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+    cout << "Checking merging two queues: edge cases" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking if heap is unchanged after merging with empty heap" << endl;
+    if (test.test_mergeWithQueue_PreMerge_RHS_Empty_Edge()) {
+        cout << "test_mergeWithQueue_PreMerge_RHS_Empty_Edge has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_mergeWithQueue_PreMerge_RHS_Empty_Edge has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking if empty heap merged with non-empty heap results in non-empty heap" << endl;
+    if (test.test_mergeWithQueue_Empty_LHS_Edge()) {
+        cout << "test_mergeWithQueue_Empty_LHS_Edge has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_mergeWithQueue_Empty_LHS_Edge has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking if mergeWithQueue throws domain_error exception if heaps do not match in heap type or structure" << endl;
+    if (test.test_mergeWithQueue_Mismatch_Edge()) {
+        cout << "ttest_mergeWithQueue_Mismatch_Edge has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_mergeWithQueue_Mismatch_Edge has FAILED" << endl << endl;
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
