@@ -345,10 +345,6 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
       // recursively call merge on p1's right child and p2; p1 and its left child have been "hung"
       p1->m_right = merge(p1->m_right, p2);
 
-      // Unlink newly added Crop* node from any of its children (if present)
-      p1->m_right->m_left = nullptr;
-      p1->m_right->m_right = nullptr;
-
       // update p1's npl after zipping up its right child
       p1->m_npl = 1 + minNPL(p1);
 
@@ -523,9 +519,16 @@ Crop* Region::rebuildHeap(Crop* oldHeap, Crop* rebuiltHeap) {
     return rebuiltHeap;
   }
 
-  rebuiltHeap = rebuildHeap(oldHeap->m_left, rebuiltHeap);
+  Crop* left = oldHeap->m_left;
+  Crop* right = oldHeap->m_right;
+  oldHeap->m_left = nullptr;
+  oldHeap->m_right = nullptr;
+  oldHeap->m_npl = 0;
 
-  rebuiltHeap = rebuildHeap(oldHeap->m_right, rebuiltHeap);
+
+  rebuiltHeap = rebuildHeap(left, rebuiltHeap);
+
+  rebuiltHeap = rebuildHeap(right, rebuiltHeap);
 
   return merge(oldHeap, rebuiltHeap);
 }
