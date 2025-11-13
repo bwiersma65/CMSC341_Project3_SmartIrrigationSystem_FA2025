@@ -79,7 +79,7 @@ Region& Region::operator=(const Region& rhs) {
   // checks against self-copying; if both heap roots are the same address, they are the same Region
   if (&rhs != this) {
     // Delete heap and its Crop nodes
-    this->clear();
+    clear();
     // Copy non-object members
     m_size = rhs.m_size;
     m_priorFunc = rhs.m_priorFunc;
@@ -681,12 +681,14 @@ void Irrigator::heapifyIrrigator(int index) {
 
     // Irrigator is min-heap thus parent nodes should have lower priority value
     // If not, bubble up by swapping parent and child to satisfy min-heapness property
-    if (m_heap[parentIndex].m_regPrior > m_heap[index].m_regPrior) {
-      Region temp = m_heap[parentIndex];
-      m_heap[parentIndex] = m_heap[index];
-      m_heap[index] = temp;
-      index = parentIndex;
+    if (m_heap[parentIndex].m_regPrior <= m_heap[index].m_regPrior) {
+      break;
     }
+
+    Region temp = m_heap[parentIndex];
+    m_heap[parentIndex] = m_heap[index];
+    m_heap[index] = temp;
+    index = parentIndex;
   }
 }
 
