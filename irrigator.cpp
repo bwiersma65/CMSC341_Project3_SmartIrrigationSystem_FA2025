@@ -93,6 +93,11 @@ Region& Region::operator=(const Region& rhs) {
   return *this;
 }
 
+/*
+Merges host queue with rhs, and leaves rhs empty
+Heaps can only merge if they match in structure and heaptype/priority function
+If they do not match, throws a domain_error exception
+*/
 void Region::mergeWithQueue(Region& rhs) {
   // checks against self-merging
   if (&rhs == this) {
@@ -234,6 +239,10 @@ HEAPTYPE Region::getHeapType() const {
   return m_heapType;
 }
 
+/*
+Prints each Crop in Region heap in pre-order fashion, starting with highest priority
+Prints Crop priority, then value of Crop members
+*/
 void Region::printCropsQueue() const {
   printCrop(m_heap);
   cout << endl;
@@ -276,7 +285,7 @@ ostream& operator<<(ostream& sout, const Crop& crop) {
      ****************************************/
 
 /*
-
+Recursively prints Crop data contents in pre-order fashion
 */
 void Region::printCrop(Crop* node) const {
   if (node==nullptr) return;
@@ -599,8 +608,9 @@ bool Irrigator::addRegion(Region & aRegion){
   else {
     // place aRegion at first empty index beyond last Region
     m_heap[m_size+1] = aRegion;
-    int index = m_size+1;
-    heapifyIrrigator(m_heap[m_size+1], index);
+    m_size++;
+    int index = m_size;
+    heapifyIrrigator(index);
     return true;
   }
 }
@@ -655,23 +665,24 @@ bool Irrigator::getCrop(Crop & aCrop){
   
 }
 
-void Irrigator::heapifyIrrigator(Region aRegion, int& index) {
-  // base case: current Region and index are root of array (index 1)
-  if (index == 1) {
-    return;
-  }
+/*
+Helper to percolate/bubble up after inserting Region node into heap array
+Parameters: heap (pointer to root/array first element), index (index of newly-inserted Region node)
+*/
+void Irrigator::heapifyIrrigator(int index) {
+  // account for root being stored at index 1 of array
+  while (index > 1) {
+    // Find parent based on index algorithm
+    int parentIndex = index/2;
 
-  // slight variation on parent index formula because the array of Regions leaves index 0 unused
-  int parentIndex = ((index-1)/2)+1;
-
-  Region parent = m_heap[parentIndex];
-  
-  if (parent.m_regPrior > aRegion.m_regPrior) {
-    Region temp = parent;
-    m_heap[parentIndex] = aRegion;
-    m_heap[index] = temp;
-    index = parentIndex;
-    return heapifyIrrigator(m_heap[index], index);
+    // Irrigator is min-heap thus parent nodes should have lower priority value
+    // If not, bubble up by swapping parent and child to satisfy min-heapness property
+    if (m_heap[parentIndex].m_regPrior > m_heap[index].m_regPrior) {
+      Region temp = m_heap[parentIndex];
+      m_heap[parentIndex] = m_heap[index];
+      m_heap[index] = temp;
+      index = parentIndex;
+    }
   }
 }
 
