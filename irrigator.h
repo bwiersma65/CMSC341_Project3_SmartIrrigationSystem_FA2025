@@ -180,6 +180,8 @@ class Region{
 
      Crop* rebuildHeap(Crop* oldHeap, Crop* rebuiltHeap);
 
+     void clearSubheap(Crop* node);
+
 };
 // min-heap implemented as array
 class Irrigator{

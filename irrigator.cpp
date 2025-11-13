@@ -199,7 +199,7 @@ void Region::setPriorityFn(prifn_t priFn, HEAPTYPE heapType) {
 }
 
 // Change the m_structure member for the object to value of parameter
-// if it differs from the previous value, rebuild the heap using the new one
+// if it differs from the previous value and requires rebuilding, rebuild the heap using the new value
 // Do not reallocate new memory, just reuse the pre-existing nodes
 void Region::setStructure(STRUCTURE structure){
   // If NOSTRUCT is passed as argument, clear the heap and set variables to reflect empty Region
@@ -209,17 +209,19 @@ void Region::setStructure(STRUCTURE structure){
   }
   else {
     STRUCTURE prev = m_structure;
-    STRUCTURE next = structure;
+    m_structure = structure;
 
-    if ((prev==SKEW) && (next==LEFTIST)) {
-
+    if ((prev==SKEW) && (m_structure==LEFTIST)) {
+      Crop* temp = m_heap;
+      m_heap = nullptr;
+      m_heap = rebuildHeap(temp, m_heap);
     }
-    else if ((prev==NOSTRUCT) && (next==SKEW)) {
+    // else if ((prev==NOSTRUCT) && (m_structure==SKEW)) {
+      
+    // }
+    // else if ((prev==NOSTRUCT) && (m_structure==LEFTIST)) {
 
-    }
-    else if ((prev==NOSTRUCT) && (next==LEFTIST)) {
-
-    }
+    // }
   }
 }
 
@@ -229,6 +231,7 @@ STRUCTURE Region::getStructure() const {
 HEAPTYPE Region::getHeapType() const {
   return m_heapType;
 }
+
 void Region::printCropsQueue() const {
   
 }
@@ -532,6 +535,22 @@ Crop* Region::rebuildHeap(Crop* oldHeap, Crop* rebuiltHeap) {
   rebuiltHeap = rebuildHeap(right, rebuiltHeap);
 
   return merge(oldHeap, rebuiltHeap);
+}
+
+/*
+Helper to clear queue
+Postorder traversal of heap to delete node children before parents
+*/
+void Region::clearSubheap(Crop* node) {
+  if (node == nullptr) {
+    return;
+  }
+
+  clearSubheap(node->m_left);
+
+  clearSubheap(node->m_right);
+
+  delete node;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
