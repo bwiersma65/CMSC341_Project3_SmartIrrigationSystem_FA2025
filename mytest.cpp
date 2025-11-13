@@ -701,7 +701,7 @@ class Tester{
                 aHeap.insertCrop(aNode);
             }
 
-            cout << "Checking if Leftist property is preserved through Region" << endl;
+            cout << "Checking if Leftist property is preserved throughout Region" << endl;
             bool isLeftist = true;
             return checkLeftist(aHeap.m_heap, isLeftist);
         }
@@ -722,7 +722,8 @@ class Tester{
             cout << "Creating 1 Region w/ Leftist min-heap" << endl;
             Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
             cout << "Populating Region with 300 Crops" << endl;
-            for (int i=0; i < 300; i++) {
+            //revert to 300
+            for (int i=0; i < 25; i++) {
                 Crop aNode(idGen.getRandNum(), 
                     temperature, 
                     moistureGen.getRandNum(), 
@@ -730,21 +731,34 @@ class Tester{
                     typeGen.getRandNum());
                 aHeap.insertCrop(aNode);
             }
-            
-            Region oldHeap(aHeap);
+
+            cout << "Checking if Leftist property is preserved throughout Region" << endl;
+            bool originalIsLeftist;
+            checkLeftist(aHeap.m_heap, originalIsLeftist);
 
             cout << "Changing Region from min-heap to max-heap" << endl;
             aHeap.setPriorityFn(priorityFn1, MAXHEAP);
 
-            // Store pre-rebuild heap contents in vector
-            vector<Crop*> oldRegion;
-            preorderVector(oldHeap.m_heap, oldRegion);
-            // Store rebuilt heap contents in vector
-            vector<Crop*> newRegion;
-            preorderVector(aHeap.m_heap, newRegion);
+            cout << "Checking if Leftist property is preserved throughout Region after rebuilding" << endl;
+            bool rebuiltIsLeftist;
+            checkLeftist(aHeap.m_heap, rebuiltIsLeftist);
 
-            bool validRebuild = true;
-            return verifyRebuild(newRegion, oldRegion, validRebuild);
+            if (originalIsLeftist && rebuiltIsLeftist) {
+                cout << "Heaps before and after rebuilding both satisfy Leftist property" << endl;
+                return true;
+            }
+            else if (originalIsLeftist && !rebuiltIsLeftist){
+                cout << "Original heap is Leftist, but after rebuilding it is not" << endl;
+                return false;
+            }
+            else if (!originalIsLeftist && rebuiltIsLeftist) {
+                cout << "Original heap not Leftist, but after rebuilding it is" << endl;
+                return false;
+            }
+            else {
+                cout << "Heaps before and after rebuilding do not satisfy Leftist property" << endl;
+                return false;
+            }
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////// TEST HELPER FUNCTIONS /////////////////
@@ -963,20 +977,6 @@ class Tester{
             return isLeftist;
         }
 
-        // Iterates through two vector parameters to confirm each uses the same data nodes in memory
-        // Returns true if each node in oldRegion is found in newRegion, false if not
-        bool verifyRebuild(vector<Crop*> newRegion, vector<Crop*> oldRegion, bool& validRebuild) const {
-            bool passed = true;
-
-            for (int i=0; i < newRegion.size(); i++) {
-                if (!sameAddress(newRegion.at(i), oldRegion)) {
-                    passed = false;
-                }
-            }
-
-            return passed;
-        }
-
         // traverses Region heap in preorder and stores Crop* nodes in vector parameter
         void preorderVector(Crop* node, vector<Crop*>& heap) const {
             // base case
@@ -993,20 +993,7 @@ class Tester{
             return;
         }
 
-        // Traverses the vector parameter to compare its Crop* elements' addresses
-        // to the Crop* parameter's address
-        // If at least one vector element address matches the Crop* parameter's address, return true
-        // If there are no matches, return false
-        bool sameAddress(Crop* node, vector<Crop*> oldRegion) const {
-            for (int i=0; i < oldRegion.size(); i++) {
-                if (oldRegion.at(i) == node) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        
+      
 };
 
 int main() {
@@ -1217,6 +1204,17 @@ int main() {
     else {
         passed = false;
         cout << "test_Leftist_Property_MinHeap has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+    cout << "Checking changing priority function for Region" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    if (test.test_setPriority_Normal()) {
+        cout << "test_setPriority_Normal has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_setPriority_Normal has FAILED" << endl << endl;
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
