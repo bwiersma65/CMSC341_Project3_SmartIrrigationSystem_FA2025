@@ -852,6 +852,132 @@ class Tester{
             }
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_printCropsQueue() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ Skew min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, SKEW, rndRegion);
+            cout << "Populating Region with 20 Crops" << endl;
+            for (int i=0; i < 20; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+
+            aHeap.printCropsQueue();
+
+            return true;
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_mergeWithQueue_Heap_Properties_Normal() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ Leftist min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 20 Crops" << endl;
+            for (int i=0; i < 20; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+
+            cout << "Creating 1 Region w/ Leftist min-heap" << endl;
+            Region bHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 20 Crops" << endl;
+            for (int i=0; i < 20; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+
+            cout << "Merging both Regions" << endl;
+            aHeap.mergeWithQueue(bHeap);
+
+            cout << "Checking Leftist property and min-heapness in new merged Region" << endl;
+            bool isLeftist = true;
+            isLeftist = checkLeftist(aHeap.m_heap, isLeftist);
+
+            bool isMinHeap = checkHeapness(&aHeap);
+
+            if (isLeftist && isMinHeap) {
+                cout << "Merged queue maintains Leftist and min-heap properties" << endl;
+                return true;
+            }
+            else if (!isLeftist && isMinHeap) {
+                cout << "Merged queue is not Leftist but is min-heap" << endl;
+                return false;
+            }
+            else if (isLeftist && !isMinHeap) {
+                cout << "Merged queue is Leftist but is not min-heap" << endl;
+                return false;
+            }
+            else {
+                cout << "Merged queue is neither Leftist nor min-heap" << endl;
+                return false;
+            }
+
+            return true;
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_mergeWithQueue_Edge() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ Skew min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, SKEW, rndRegion);
+            cout << "Populating Region with 20 Crops" << endl;
+            for (int i=0; i < 20; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+
+            aHeap.printCropsQueue();
+
+            return true;
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////// TEST HELPER FUNCTIONS /////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool checkHeapness (Region* heap) const {
@@ -1329,6 +1455,9 @@ int main() {
         cout << "test_setStructure_Normal has FAILED" << endl << endl;
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+    cout << "Testing printCropsQueue" << endl;
+    test.test_printCropsQueue();
 
     if (passed) {
         cout << endl << "All tests passed! Yippee!" << endl;
