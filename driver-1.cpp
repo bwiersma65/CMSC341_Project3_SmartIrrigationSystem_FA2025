@@ -174,29 +174,29 @@ int main(){
     cout << "Checking the tree of regions:" << endl;
     regionsQueue.dump();
 
-    Region highPrioRegion;
+    // Region highPrioRegion;
 
-    cout << endl << "Get the highest priority region:" << endl;
-    regionsQueue.getRegion(highPrioRegion);
-    cout << endl; highPrioRegion.dump();
+    // cout << endl << "Get the highest priority region:" << endl;
+    // regionsQueue.getRegion(highPrioRegion);
+    // cout << endl; highPrioRegion.dump();
 
-    cout << endl << "Get the 3rd highest priority region:" << endl;
-    regionsQueue.getNthRegion(highPrioRegion, 3); // get third highest priority
-    cout << endl; highPrioRegion.dump();
+    // cout << endl << "Get the 3rd highest priority region:" << endl;
+    // regionsQueue.getNthRegion(highPrioRegion, 3); // get third highest priority
+    // cout << endl; highPrioRegion.dump();
 
-    cout << endl << "Checking the tree of regions:" << endl;
-    cout << endl; regionsQueue.dump();
+    // cout << endl << "Checking the tree of regions:" << endl;
+    // cout << endl; regionsQueue.dump();
 
-    cout << "Changing the priority function in the highest priority region:" << endl;
-    regionsQueue.setPriorityFn(priorityFn1, MAXHEAP, 1); // change the root's priority function
+    // cout << "Changing the priority function in the highest priority region:" << endl;
+    // regionsQueue.setPriorityFn(priorityFn1, MAXHEAP, 1); // change the root's priority function
 
-    cout << endl << "Get the highest priority region, it must be a max heap now:" << endl;
-    regionsQueue.getRegion(highPrioRegion);
-    cout << endl; highPrioRegion.dump();
+    // cout << endl << "Get the highest priority region, it must be a max heap now:" << endl;
+    // regionsQueue.getRegion(highPrioRegion);
+    // cout << endl; highPrioRegion.dump();
 
-    cout << endl << "Get the highest priority region, this one be a min heap:" << endl;
-    regionsQueue.getRegion(highPrioRegion); 
-    cout << endl; highPrioRegion.dump();
+    // cout << endl << "Get the highest priority region, this one be a min heap:" << endl;
+    // regionsQueue.getRegion(highPrioRegion); 
+    // cout << endl; highPrioRegion.dump();
 
     cout << endl;
     return 0;
