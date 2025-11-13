@@ -110,7 +110,12 @@ void Region::mergeWithQueue(Region& rhs) {
   }
 }
 
-// Add check for if crop argument is nullptr
+/*
+This function will deep-copy the Crop parameter and insert the copy into the Region's heap
+If the Region has any member values indicating emptiness, returns false before trying
+to insert a Crop
+If the Crop's priority value is invalid, returns false before trying to insert a Crop
+*/
 bool Region::insertCrop(const Crop& crop) {
   // if any of Region members are set to invalid values, do not add Crop to Region
   if ((m_priorFunc==nullptr) || (m_heapType==NOTYPE) || (m_structure==NOSTRUCT) || (m_regPrior <= 0)) {
@@ -168,9 +173,11 @@ Crop Region::getNextCrop() {
 }
 
 // Change the m_priorFunc and heapType members for the object to values of respective parameters
-// if they differ from the previous values, rebuild the heap using the new ones (by using merge helper)
+// Rebuild the heap using the new values (by using recursive rebuild helper and merge helper)
 // Do not reallocate new memory, just reuse the pre-existing nodes
 // Don't need to check that prifn is nullptr; make sure heapType is valid
+// No need to verify compatibility of priFn and heapType
+// Should operate normally for empty and non-empty Region heaps
 void Region::setPriorityFn(prifn_t priFn, HEAPTYPE heapType) {
   // If NOTYPE passed as argument, clear the heap and set variables to reflect empty Region
   if (heapType==NOTYPE) {
@@ -178,7 +185,16 @@ void Region::setPriorityFn(prifn_t priFn, HEAPTYPE heapType) {
     return;
   }
   else {
+    // Change heaptype and priority function to parameter values
+    m_heapType = heapType;
+    m_priorFunc = priFn;
 
+    // Place heap in temp holder, clear pointer to heap root
+    Crop* temp = m_heap;
+    m_heap = nullptr;
+    
+    /// Call recursive helper to rebuild heap from temp holder into m_heap member
+    m_heap = rebuildHeap(temp, m_heap);
   }
 }
 
@@ -328,6 +344,10 @@ Crop* Region::merge(Crop* p1, Crop* p2) {
 
       // recursively call merge on p1's right child and p2; p1 and its left child have been "hung"
       p1->m_right = merge(p1->m_right, p2);
+
+      // Unlink newly added Crop* node from any of its children (if present)
+      p1->m_right->m_left = nullptr;
+      p1->m_right->m_right = nullptr;
 
       // update p1's npl after zipping up its right child
       p1->m_npl = 1 + minNPL(p1);
@@ -492,6 +512,24 @@ Crop* Region::copyHeap(Crop* root) const {
   return newRoot;
 }
 
+/*
+Helper for rebuilding heap
+Postorder traversal of oldHeap parameter, populating rebuiltHeap parameter by merging
+Does not allocate new memory
+*/
+Crop* Region::rebuildHeap(Crop* oldHeap, Crop* rebuiltHeap) {
+  // base case
+  if (oldHeap == nullptr) {
+    return rebuiltHeap;
+  }
+
+  rebuiltHeap = rebuildHeap(oldHeap->m_left, rebuiltHeap);
+
+  rebuiltHeap = rebuildHeap(oldHeap->m_right, rebuiltHeap);
+
+  return merge(oldHeap, rebuiltHeap);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 Irrigator::Irrigator(int size){
   // check for invalid array size; if so, make invalid (empty) Irrigator
@@ -527,18 +565,22 @@ bool Irrigator::addRegion(Region & aRegion){
     return true;
   }
 }
+
 // Return Region in parameter
 bool Irrigator::getRegion(Region & aRegion){
   
 }
+
 // Lowest valid value of n is ROOTINDEX
 bool Irrigator::getNthRegion(Region & aRegion, int n){
   
 }
+
 void Irrigator::dump(){
     dump(ROOTINDEX);
     cout << endl;
 }
+
 void Irrigator::dump(int index){
   if (index <= m_size){
     cout << "(";
@@ -548,14 +590,17 @@ void Irrigator::dump(int index){
     cout << ")";
   }
 }
+
 // Returns true if Region found with nth priority
 bool Irrigator::setPriorityFn(prifn_t priFn, HEAPTYPE heapType, int n){
   
 }
+
 // Returns true if Region found with nth priority
 bool Irrigator::setStructure(STRUCTURE structure, int n){
   
 }
+
 // This will call Region::getNextCrop() for the highest-priority Region currently in the Irrigator
 // Returns the Crop in the parameter by deep-copying from result of getNextCrop() into parameter aCrop
 
