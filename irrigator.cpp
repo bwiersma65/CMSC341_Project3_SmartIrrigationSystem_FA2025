@@ -37,15 +37,15 @@ Region::~Region()
   this->clear();
 }
 
-// FIX ME
 // Clears the queue; delete all nodes in heap leaving it empty, and re-initialize member variables
 void Region::clear() {
-  // implement this
-  delete m_heap;
+  // Recursive helper; postorder traversal of heap, deleting from bottom up
+  clearSubheap(m_heap);
 
+  m_heap = nullptr;
   m_size = 0;
   m_priorFunc = nullptr;
-  //m_heapType = NOTYPE;
+  m_heapType = NOTYPE;
   m_structure = NOSTRUCT;
   m_regPrior = 0;    
 }
