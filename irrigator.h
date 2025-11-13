@@ -178,7 +178,7 @@ class Region{
 
      Crop* copyHeap(Crop* root) const;
 
-     Crop* rebuildHeap(Crop* node) const;
+     Crop* rebuildHeap(Crop* oldHeap, Crop* rebuiltHeap);
 
 };
 // min-heap implemented as array
