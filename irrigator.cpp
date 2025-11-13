@@ -167,15 +167,18 @@ Crop Region::getNextCrop() {
   }
   else {
     // store highest priority Crop in temp holder
-    Crop* temp = m_heap;
+    Crop temp = *m_heap;
+    //Crop* tempPtr = m_heap;
     // merge left and right subheaps and store as new m_heap
-    m_heap = merge(m_heap->m_left, m_heap->m_right);
+    Crop* tempPtr = merge(m_heap->m_left, m_heap->m_right);
+    delete m_heap;
+    m_heap = tempPtr;
     // unlink highest priority Crop from former children
-    temp->m_left = nullptr;
-    temp->m_right = nullptr;
-    temp->m_npl = 0;
+    temp.m_left = nullptr;
+    temp.m_right = nullptr;
+    temp.m_npl = 0;
     // Return dereferenced Crop object
-    return *temp;
+    return temp;
   }
 }
 
@@ -607,7 +610,8 @@ bool Irrigator::addRegion(Region & aRegion){
   }
   else {
     // place aRegion at first empty index beyond last Region
-    m_heap[m_size+1] = aRegion;
+    Region temp(aRegion);
+    m_heap[m_size+1] = temp;
     m_size++;
     int index = m_size;
     heapifyIrrigator(index);
