@@ -213,7 +213,7 @@ class Irrigator{
 
     void dump(int index);
 
-    void downHeapifyIrrigator(int index);
+    void upHeapifyIrrigator(int index);
 
     Region* findNthRegion(Region* aRegion, int n) const;
 };
