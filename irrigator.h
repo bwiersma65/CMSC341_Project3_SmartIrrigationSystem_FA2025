@@ -178,6 +178,8 @@ class Region{
 
      Crop* copyHeap(Crop* root) const;
 
+     Crop* rebuildHeap(Crop* node) const;
+
 };
 // min-heap implemented as array
 class Irrigator{
