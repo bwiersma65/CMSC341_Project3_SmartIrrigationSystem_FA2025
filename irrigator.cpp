@@ -34,7 +34,7 @@ Region::Region(prifn_t priFn, HEAPTYPE heapType, STRUCTURE structure, int regPri
 // Deallocates memory and re-initializes member variables
 Region::~Region()
 {
-  this->clear();
+  clear();
 }
 
 // Clears the queue; delete all nodes in heap leaving it empty, and re-initialize member variables
@@ -94,20 +94,22 @@ Region& Region::operator=(const Region& rhs) {
 }
 
 void Region::mergeWithQueue(Region& rhs) {
-  // checks against self-merging; if both heap roots are the same address, they are the same Region
-  if (rhs.m_heap == m_heap) {
-  //if (rhs==this) {
+  // checks against self-merging
+  if (&rhs == this) {
     return;
   }
   // if both Regions do not match in structure or heap type, do not merge
-  if ((rhs.m_structure != m_structure) || (rhs.m_heapType != m_heapType)) {
-    throw domain_error("Mismatch heaptype or structure");
+  if ((rhs.m_structure != m_structure) || (rhs.m_heapType != m_heapType) || (rhs.m_priorFunc != m_priorFunc)) {
+    throw domain_error("Mismatched heaptype or structure");
   }
-  // CHECK THIS
   // Checks if rhs priority is valid
   if (rhs.m_regPrior < 0) {
     return;
   }
+  // Calls recursive merge helper to merge both heaps and assign to this Region's m_heap member
+  m_heap = merge(m_heap, rhs.m_heap);
+  // Clears the heap of the rhs Region after merging
+  rhs.m_heap = nullptr;
 }
 
 /*
@@ -233,7 +235,7 @@ HEAPTYPE Region::getHeapType() const {
 }
 
 void Region::printCropsQueue() const {
-  
+  printCrop(m_heap);
 }
 
 void Region::dump() const {
@@ -271,6 +273,19 @@ ostream& operator<<(ostream& sout, const Crop& crop) {
     /****************************************
      * Helper function definitions go here! *
      ****************************************/
+
+/*
+
+*/
+void Region::printCrop(Crop* node) const {
+  if (node==nullptr) return;
+
+  cout << "[" << m_priorFunc(*node) << "] " << *node << endl;
+
+  printCrop(node->m_left);
+
+  printCrop(node->m_right);
+}
 
 /*
 Traverses the heap in pre-order fashion, incrementing for every non-null node found
