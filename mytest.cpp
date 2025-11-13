@@ -760,6 +760,98 @@ class Tester{
             }
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_setPriority_Edge() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 empty Region w/ Leftist min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+
+            cout << "Checking if Leftist property is preserved throughout empty Region" << endl;
+            bool originalIsLeftist = true;
+            originalIsLeftist = checkLeftist(aHeap.m_heap, originalIsLeftist);
+
+            cout << "Changing Region from min-heap to max-heap" << endl;
+            aHeap.setPriorityFn(priorityFn1, MAXHEAP);
+
+            cout << "Checking if Leftist property is preserved throughout empty Region after rebuilding" << endl;
+            bool rebuiltIsLeftist = true;
+            rebuiltIsLeftist = checkLeftist(aHeap.m_heap, rebuiltIsLeftist);
+
+            if (originalIsLeftist && rebuiltIsLeftist) {
+                cout << "Heaps before and after rebuilding both satisfy Leftist property" << endl;
+                return true;
+            }
+            else if (originalIsLeftist && !rebuiltIsLeftist){
+                cout << "Original heap is Leftist, but after rebuilding it is not" << endl;
+                return false;
+            }
+            else if (!originalIsLeftist && rebuiltIsLeftist) {
+                cout << "Original heap not Leftist, but after rebuilding it is" << endl;
+                return false;
+            }
+            else {
+                cout << "Heaps before and after rebuilding do not satisfy Leftist property" << endl;
+                return false;
+            }
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_setStructure_Normal() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ Skew min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, SKEW, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+
+            cout << "Checking if Leftist property is preserved throughout Region" << endl;
+            bool originalIsLeftist = true;
+            originalIsLeftist = checkLeftist(aHeap.m_heap, originalIsLeftist);
+
+            cout << "Changing Region from Skew to Leftist" << endl;
+            aHeap.setStructure(LEFTIST);
+
+            cout << "Checking if Leftist property is preserved throughout Region after rebuilding" << endl;
+            bool rebuiltIsLeftist = true;
+            rebuiltIsLeftist = checkLeftist(aHeap.m_heap, rebuiltIsLeftist);
+
+            if (!originalIsLeftist && rebuiltIsLeftist) {
+                cout << "Heap before does not satisfy Leftist but after rebuilding it does" << endl;
+                return true;
+            }
+            else if (!originalIsLeftist && !rebuiltIsLeftist){
+                cout << "Heap does not satisfy Leftist before or after rebuilding" << endl;
+                return false;
+            }
+            else if (originalIsLeftist && rebuiltIsLeftist) {
+                cout << "Heap satisfies leftist before and after rebuild" << endl;
+                return true;
+            }
+            else {
+                cout << "Heap is leftist before rebuild but not after" << endl;
+                return false;
+            }
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////// TEST HELPER FUNCTIONS /////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool checkHeapness (Region* heap) const {
@@ -1214,6 +1306,27 @@ int main() {
     else {
         passed = false;
         cout << "test_setPriority_Normal has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking changing priority function for empty Region" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    if (test.test_setPriority_Edge()) {
+        cout << "test_setPriority_Edge has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_setPriority_Edge has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+    cout << "Checking changing structure for Region" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    if (test.test_setStructure_Normal()) {
+        cout << "test_setStructure_Normal has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_setStructure_Normal has FAILED" << endl << endl;
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
