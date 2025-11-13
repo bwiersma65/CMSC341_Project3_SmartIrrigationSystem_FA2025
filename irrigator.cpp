@@ -236,6 +236,7 @@ HEAPTYPE Region::getHeapType() const {
 
 void Region::printCropsQueue() const {
   printCrop(m_heap);
+  cout << endl;
 }
 
 void Region::dump() const {
