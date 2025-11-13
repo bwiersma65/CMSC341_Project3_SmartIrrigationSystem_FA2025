@@ -706,6 +706,47 @@ class Tester{
             return checkLeftist(aHeap.m_heap, isLeftist);
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_setPriority_Normal() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
+
+            cout << "Creating 1 Region w/ Leftist min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+            
+            Region oldHeap(aHeap);
+
+            cout << "Changing Region from min-heap to max-heap" << endl;
+            aHeap.setPriorityFn(priorityFn1, MAXHEAP);
+
+            // Store pre-rebuild heap contents in vector
+            vector<Crop*> oldRegion;
+            preorderVector(oldHeap.m_heap, oldRegion);
+            // Store rebuilt heap contents in vector
+            vector<Crop*> newRegion;
+            preorderVector(aHeap.m_heap, newRegion);
+
+            bool validRebuild = true;
+            return verifyRebuild(newRegion, oldRegion, validRebuild);
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////// TEST HELPER FUNCTIONS /////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool checkHeapness (Region* heap) const {
@@ -921,6 +962,45 @@ class Tester{
 
             return isLeftist;
         }
+
+        bool verifyRebuild(vector<Crop*> newRegion, vector<Crop*> oldRegion, bool& validRebuild) const {
+            bool passed = true;
+
+            for (int i=0; i < newRegion.size(); i++) {
+                if (!sameAddress(newRegion.at(i), oldRegion)) {
+                    passed = false;
+                }
+            }
+
+            return passed;
+        }
+
+        // traverses Region heap in preorder and stores Crop* nodes in vector parameter
+        void preorderVector(Crop* node, vector<Crop*>& heap) const {
+            // base case
+            if (node==nullptr) {
+                return;
+            }
+
+            heap.push_back(node);
+
+            preorderVector(node->m_left, heap);
+
+            preorderVector(node->m_right, heap);
+
+            return;
+        }
+
+        bool sameAddress(Crop* node, vector<Crop*> oldRegion) const {
+            for (int i=0; i < oldRegion.size(); i++) {
+                if (oldRegion.at(i) == node) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        
 };
 
 int main() {
