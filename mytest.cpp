@@ -722,8 +722,7 @@ class Tester{
             cout << "Creating 1 Region w/ Leftist min-heap" << endl;
             Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
             cout << "Populating Region with 300 Crops" << endl;
-            //revert to 300
-            for (int i=0; i < 25; i++) {
+            for (int i=0; i < 300; i++) {
                 Crop aNode(idGen.getRandNum(), 
                     temperature, 
                     moistureGen.getRandNum(), 
@@ -732,16 +731,20 @@ class Tester{
                 aHeap.insertCrop(aNode);
             }
 
+            aHeap.dump();
+
             cout << "Checking if Leftist property is preserved throughout Region" << endl;
-            bool originalIsLeftist;
-            checkLeftist(aHeap.m_heap, originalIsLeftist);
+            bool originalIsLeftist = true;
+            originalIsLeftist = checkLeftist(aHeap.m_heap, originalIsLeftist);
 
             cout << "Changing Region from min-heap to max-heap" << endl;
             aHeap.setPriorityFn(priorityFn1, MAXHEAP);
 
+            aHeap.dump();
+
             cout << "Checking if Leftist property is preserved throughout Region after rebuilding" << endl;
-            bool rebuiltIsLeftist;
-            checkLeftist(aHeap.m_heap, rebuiltIsLeftist);
+            bool rebuiltIsLeftist = true;
+            rebuiltIsLeftist = checkLeftist(aHeap.m_heap, rebuiltIsLeftist);
 
             if (originalIsLeftist && rebuiltIsLeftist) {
                 cout << "Heaps before and after rebuilding both satisfy Leftist property" << endl;
