@@ -731,16 +731,12 @@ class Tester{
                 aHeap.insertCrop(aNode);
             }
 
-            aHeap.dump();
-
             cout << "Checking if Leftist property is preserved throughout Region" << endl;
             bool originalIsLeftist = true;
             originalIsLeftist = checkLeftist(aHeap.m_heap, originalIsLeftist);
 
             cout << "Changing Region from min-heap to max-heap" << endl;
             aHeap.setPriorityFn(priorityFn1, MAXHEAP);
-
-            aHeap.dump();
 
             cout << "Checking if Leftist property is preserved throughout Region after rebuilding" << endl;
             bool rebuiltIsLeftist = true;

@@ -519,6 +519,7 @@ Crop* Region::rebuildHeap(Crop* oldHeap, Crop* rebuiltHeap) {
     return rebuiltHeap;
   }
 
+  // Pluck and store child pointers from parameter before clearing their fields and NPL
   Crop* left = oldHeap->m_left;
   Crop* right = oldHeap->m_right;
   oldHeap->m_left = nullptr;
