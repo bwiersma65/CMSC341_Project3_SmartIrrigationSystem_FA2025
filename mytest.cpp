@@ -1067,7 +1067,8 @@ class Tester{
             aHeap.mergeWithQueue(bHeap);
 
             cout << "Checking if heap is now non-empty heap" << endl;
-            return checkCopy(oldHeap, aHeap);
+            bool isNonEmpty = true;
+            return checkHeapValue(oldHeap.m_heap, aHeap.m_heap, isNonEmpty);
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool test_mergeWithQueue_Mismatch_Edge() {
