@@ -897,8 +897,8 @@ class Tester{
 
             cout << "Creating 1 Region w/ Leftist min-heap" << endl;
             Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
-            cout << "Populating Region with 20 Crops" << endl;
-            for (int i=0; i < 20; i++) {
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
                 Crop aNode(idGen.getRandNum(), 
                     temperature, 
                     moistureGen.getRandNum(), 
@@ -909,8 +909,8 @@ class Tester{
 
             cout << "Creating 1 Region w/ Leftist min-heap" << endl;
             Region bHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
-            cout << "Populating Region with 20 Crops" << endl;
-            for (int i=0; i < 20; i++) {
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
                 Crop aNode(idGen.getRandNum(), 
                     temperature, 
                     moistureGen.getRandNum(), 
@@ -944,8 +944,54 @@ class Tester{
                 cout << "Merged queue is neither Leftist nor min-heap" << endl;
                 return false;
             }
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool test_mergeWithQueue_RHS_Empty_Normal() {
+            //////////////////////Random Generators////////////////////////
+            Random regionGen(1,30);
+            Random idGen(MINCROPID,MAXCROPID);
+            Random temperatureGen(MINTEMP,MAXTEMP);
+            int temperature = temperatureGen.getRandNum();
+            Random moistureGen(MINMOISTURE,MAXMOISTURE);
+            Random timeGen(MINTIME,MAXTIME);
+            int time = timeGen.getRandNum();
+            Random typeGen(MINTYPE,MAXTYPE);
+            int rndRegion = regionGen.getRandNum();
+            ///////////////////////////////////////////////////////////////
 
-            return true;
+            cout << "Creating 1 Region w/ Leftist min-heap" << endl;
+            Region aHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+
+            cout << "Creating 1 Region w/ Leftist min-heap" << endl;
+            Region bHeap(priorityFn2, MINHEAP, LEFTIST, rndRegion);
+            cout << "Populating Region with 300 Crops" << endl;
+            for (int i=0; i < 300; i++) {
+                Crop aNode(idGen.getRandNum(), 
+                    temperature, 
+                    moistureGen.getRandNum(), 
+                    time, 
+                    typeGen.getRandNum());
+                aHeap.insertCrop(aNode);
+            }
+
+            cout << "Merging both Regions" << endl;
+            aHeap.mergeWithQueue(bHeap);
+
+            if (bHeap.m_heap != nullptr) {
+                return false;
+            }
+            else {
+                return true;
+            }
         }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         bool test_mergeWithQueue_Edge() {
@@ -1453,6 +1499,27 @@ int main() {
     else {
         passed = false;
         cout << "test_setStructure_Normal has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+    cout << "Checking merging two queues: normal cases" << endl << endl;
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking heap properties of merged region" << endl;
+    if (test.test_mergeWithQueue_Heap_Properties_Normal()) {
+        cout << "test_mergeWithQueue_Heap_Properties_Normal has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_mergeWithQueue_Heap_Properties_Normal has FAILED" << endl << endl;
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////
+    cout << "Checking if right-hand side Region's heap is emptied properly after merge" << endl;
+    if (test.test_mergeWithQueue_RHS_Empty_Normal()) {
+        cout << "test_mergeWithQueue_RHS_Empty_Normal has PASSED" << endl << endl;
+    }
+    else {
+        passed = false;
+        cout << "test_mergeWithQueue_RHS_Empty_Normal has FAILED" << endl << endl;
     }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
