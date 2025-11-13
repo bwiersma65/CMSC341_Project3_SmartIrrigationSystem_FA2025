@@ -963,6 +963,8 @@ class Tester{
             return isLeftist;
         }
 
+        // Iterates through two vector parameters to confirm each uses the same data nodes in memory
+        // Returns true if each node in oldRegion is found in newRegion, false if not
         bool verifyRebuild(vector<Crop*> newRegion, vector<Crop*> oldRegion, bool& validRebuild) const {
             bool passed = true;
 
@@ -981,7 +983,7 @@ class Tester{
             if (node==nullptr) {
                 return;
             }
-
+            // Stores Crop* in vector
             heap.push_back(node);
 
             preorderVector(node->m_left, heap);
@@ -991,6 +993,10 @@ class Tester{
             return;
         }
 
+        // Traverses the vector parameter to compare its Crop* elements' addresses
+        // to the Crop* parameter's address
+        // If at least one vector element address matches the Crop* parameter's address, return true
+        // If there are no matches, return false
         bool sameAddress(Crop* node, vector<Crop*> oldRegion) const {
             for (int i=0; i < oldRegion.size(); i++) {
                 if (oldRegion.at(i) == node) {
