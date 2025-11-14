@@ -599,6 +599,7 @@ Irrigator::Irrigator(int size){
     m_size = 0;
   }
 }
+
 Irrigator::~Irrigator(){
   
 }
@@ -614,14 +615,29 @@ bool Irrigator::addRegion(Region & aRegion){
     m_heap[m_size+1] = temp;
     m_size++;
     int index = m_size;
-    heapifyIrrigator(index);
+    upHeapifyIrrigator(index);
     return true;
   }
 }
 
 // Return Region in parameter
 bool Irrigator::getRegion(Region & aRegion){
-  
+  if (m_size == 0) {
+    return false;
+  }
+  // Swap highest priority Region at root with last Region in array
+  Region highestPriority = m_heap[ROOTINDEX];
+  m_heap[ROOTINDEX] = m_heap[m_size];
+  // decrement size counter
+  m_size--;
+
+  // Store removed high priority Region in parameter
+  aRegion = m_heap[m_size];
+
+  // helper to percolate down from root
+  downHeapifyIrrigator(ROOTINDEX);
+
+  return true;
 }
 
 // Lowest valid value of n is ROOTINDEX
@@ -673,7 +689,7 @@ bool Irrigator::getCrop(Crop & aCrop){
 Helper to percolate/bubble up after inserting Region node into heap array
 Parameters: heap (pointer to root/array first element), index (index of newly-inserted Region node)
 */
-void Irrigator::heapifyIrrigator(int index) {
+void Irrigator::upHeapifyIrrigator(int index) {
   // account for root being stored at index 1 of array
   while (index > 1) {
     // Find parent based on index algorithm
@@ -689,6 +705,45 @@ void Irrigator::heapifyIrrigator(int index) {
     m_heap[parentIndex] = m_heap[index];
     m_heap[index] = temp;
     index = parentIndex;
+  }
+}
+
+void Irrigator::downHeapifyIrrigator(int index) {
+  int parent = index;
+
+  bool minheapSatisfied = false;
+  while (!minheapSatisfied) {
+    // calculate indices of node's children
+    int left = 2 * parent;
+    int right = 2 * parent + 1;
+    // set parent as temporary minimum before comparing with its children
+    int minimum = parent;
+
+    // make sure child index is within bounds of array currently being used to store Regions
+    // compare priority of current minimum (parent) to left child
+    // if child has less priority, set it to minimum
+    if ((left <= m_size) && (m_heap[minimum].m_regPrior > m_heap[left].m_regPrior)) {
+      minimum = left;
+    }
+
+    // compare priority of current minimum (parent or left) to right child
+    // if child has less priority, set it to minimum of all three
+    if ((right <= m_size) && (m_heap[minimum].m_regPrior > m_heap[right].m_regPrior)) {
+      minimum = right;
+    }
+    // if parent priority is smaller than that of either child, min-heap property is satisfied
+    if (parent == minimum) {
+      minheapSatisfied = true;
+      break;
+    }
+
+    // Otherwise, swap parent and smallest child to satisfy min-heap property
+    Region temp = m_heap[parent];
+    m_heap[parent] = m_heap[minimum];
+    m_heap[minimum] = temp;
+
+    // continue to next set of comparisons
+    parent = minimum;
   }
 }
 
