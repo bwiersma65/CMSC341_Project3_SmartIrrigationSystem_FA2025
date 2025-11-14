@@ -751,7 +751,47 @@ bool Irrigator::setPriorityFn(prifn_t priFn, HEAPTYPE heapType, int n){
 
 // Returns true if Region found with nth priority
 bool Irrigator::setStructure(STRUCTURE structure, int n){
-  
+  // guard against invalid priority orders
+  if ((n < ROOTINDEX) || (n > m_size)) {
+    return false;
+  }
+
+  // temp array to hold dequeued regions
+  Region* temp;
+  // if 1st highest priority is requested, no need to store any Regions in a temp array
+  if (n != 1) {
+    temp = new Region[n-1];
+  }
+  int counter = 0;
+
+  // dequeues n-1 regions, ending with the nth priority region sitting at ROOTINDEX
+  while (counter < (n - 1)) {
+    // copy Region at root into temp array
+    temp[counter] = m_heap[ROOTINDEX];
+
+    // remove copied root from heap and reheap
+    m_heap[ROOTINDEX] = m_heap[m_size];
+    m_size--;
+    downHeapifyIrrigator(ROOTINDEX);
+
+    counter++;
+  }
+
+  // set the priority fn + heaptype of the nth-highest priority region to parameters
+  m_heap[ROOTINDEX].setStructure(structure);
+
+  // Reinsert dequeued regions from temp array back into heap array
+  for (int i=0; i < (counter); i++) {
+    m_size++;
+    m_heap[m_size] = temp[i];
+    upHeapifyIrrigator(m_size);
+  }
+
+  if (n != 1) {
+    delete[] temp;
+  }
+
+  return true;
 }
 
 // This will call Region::getNextCrop() for the highest-priority Region currently in the Irrigator
@@ -829,8 +869,4 @@ void Irrigator::downHeapifyIrrigator(int index) {
     // continue to next set of comparisons
     parent = minimum;
   }
-}
-
-Region* Irrigator::findNthRegion(Region* aRegion, int n) const {
-  
 }
