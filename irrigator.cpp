@@ -806,7 +806,33 @@ bool Irrigator::setStructure(STRUCTURE structure, int n){
 // When getCrop(Crop&) encounters an empty Region on way down to first non-empty Region, it deletes empty Region
 // Every time this function runs, it will delete all empty Regions that have bubbled to top
 bool Irrigator::getCrop(Crop & aCrop){
-  
+  // if Region heap is empty, no Crops to return
+  if (m_size == 0) {
+    return false;
+  }
+
+  while (m_size > 0) {
+    // store current highest priority Region in temp variable
+    Region root = m_heap[ROOTINDEX];
+
+    // Highest-priority Region is empty; must dequeue
+    if (root.numCrops() == 0) {
+      m_heap[ROOTINDEX] = m_heap[m_size];
+      m_size--;
+      downHeapifyIrrigator(ROOTINDEX);
+      continue;
+    }
+    // Highest-priority Region is not empty; return Region's highest priority Crop in parameter
+    Crop crop = root.getNextCrop();
+    // Deep copy returned root
+    Crop deepCopy(crop.getCropID(), crop.getTemperature(), crop.getMoisture(), crop.getTime(), crop.getType());
+    aCrop = deepCopy;
+    delete &crop;
+
+    return true;
+  }
+  // m_size == 0, meaning every Region in heap was empty and is now dequeued
+  return false;
 }
 
 /*
