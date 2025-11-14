@@ -628,11 +628,12 @@ bool Irrigator::getRegion(Region & aRegion){
   // Swap highest priority Region at root with last Region in array
   Region highestPriority = m_heap[ROOTINDEX];
   m_heap[ROOTINDEX] = m_heap[m_size];
-  // decrement size counter
-  m_size--;
 
   // Store removed high priority Region in parameter
-  aRegion = m_heap[m_size];
+  aRegion = highestPriority;
+
+  // decrement size counter
+  m_size--;
 
   // helper to percolate down from root
   downHeapifyIrrigator(ROOTINDEX);
@@ -642,7 +643,46 @@ bool Irrigator::getRegion(Region & aRegion){
 
 // Lowest valid value of n is ROOTINDEX
 bool Irrigator::getNthRegion(Region & aRegion, int n){
-  
+  // validate requested nth-highest priority
+  if ((n < ROOTINDEX) || (n > m_size)) {
+    return false;
+  }
+
+  // temp array to hold dequeued Regions
+  Region* temp = new Region[n];
+
+  int counter = 0;
+
+  bool nthNotFound = true;
+  while (nthNotFound) {
+    // once n regions have been removed, the nth removed region is the nth highest priority region
+    if (counter == n) {
+      nthNotFound = false;
+      break;
+    }
+    // copy Region at root into temp array
+    temp[counter] = m_heap[ROOTINDEX];
+
+    // remove copied root from heap and reheap
+    m_heap[ROOTINDEX] = m_heap[m_size];
+    m_size--;
+    downHeapifyIrrigator(ROOTINDEX);
+
+    counter++;
+  }
+  // assign parameter with nth highest priority region, found at index n-1
+  aRegion = temp[counter-1];
+
+  // Reinsert dequeued regions from temp array back into heap array
+  for (int i=0; i < (counter-1); i++) {
+    m_size++;
+    m_heap[m_size] = temp[i];
+    upHeapifyIrrigator(m_size);
+  }
+  // delete temp array (this will not delete contents from heap)
+  delete[] temp;
+
+  return true;
 }
 
 void Irrigator::dump(){
