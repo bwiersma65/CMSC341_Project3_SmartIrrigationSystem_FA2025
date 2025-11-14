@@ -185,7 +185,6 @@ class Region{
      void clearSubheap(Crop* node);
 
 };
-// min-heap implemented as array
 class Irrigator{
     public:
     friend class Grader; // for grading purposes
