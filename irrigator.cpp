@@ -649,17 +649,11 @@ bool Irrigator::getNthRegion(Region & aRegion, int n){
   }
 
   // temp array to hold dequeued Regions
-  Region* temp = new Region[n];
-
+  Region* temp = new Region[n-1];
   int counter = 0;
 
-  bool nthNotFound = true;
-  while (nthNotFound) {
-    // once n regions have been removed, the nth removed region is the nth highest priority region
-    if (counter == n) {
-      nthNotFound = false;
-      break;
-    }
+  // dequeues n-1 regions, ending with the nth priority region sitting at ROOTINDEX
+  while (counter < (n - 1)) {
     // copy Region at root into temp array
     temp[counter] = m_heap[ROOTINDEX];
 
@@ -670,11 +664,15 @@ bool Irrigator::getNthRegion(Region & aRegion, int n){
 
     counter++;
   }
-  // assign parameter with nth highest priority region, found at index n-1
-  aRegion = temp[counter-1];
+
+  // return nth highest priority region in parameter and remove from heap
+  aRegion = m_heap[ROOTINDEX];
+  m_heap[ROOTINDEX] = m_heap[m_size];
+  m_size--;
+  downHeapifyIrrigator(ROOTINDEX);
 
   // Reinsert dequeued regions from temp array back into heap array
-  for (int i=0; i < (counter-1); i++) {
+  for (int i=0; i < (counter); i++) {
     m_size++;
     m_heap[m_size] = temp[i];
     upHeapifyIrrigator(m_size);
@@ -702,7 +700,41 @@ void Irrigator::dump(int index){
 
 // Returns true if Region found with nth priority
 bool Irrigator::setPriorityFn(prifn_t priFn, HEAPTYPE heapType, int n){
-  
+  // guard against invalid priority orders
+  if ((n < ROOTINDEX) || (n > m_size)) {
+    return false;
+  }
+
+  // temp array to hold dequeued regions
+  Region* temp = new Region[n-1];
+  int counter = 0;
+
+  // dequeues n-1 regions, ending with the nth priority region sitting at ROOTINDEX
+  while (counter < (n - 1)) {
+    // copy Region at root into temp array
+    temp[counter] = m_heap[ROOTINDEX];
+
+    // remove copied root from heap and reheap
+    m_heap[ROOTINDEX] = m_heap[m_size];
+    m_size--;
+    downHeapifyIrrigator(ROOTINDEX);
+
+    counter++;
+  }
+
+  // set the priority fn + heaptype of the nth-highest priority region to parameters
+  m_heap[ROOTINDEX].setPriorityFn(priFn, heapType);
+
+  // Reinsert dequeued regions from temp array back into heap array
+  for (int i=0; i < (counter); i++) {
+    m_size++;
+    m_heap[m_size] = temp[i];
+    upHeapifyIrrigator(m_size);
+  }
+
+  delete[] temp;
+
+  return true;
 }
 
 // Returns true if Region found with nth priority
