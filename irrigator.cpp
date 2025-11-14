@@ -649,7 +649,11 @@ bool Irrigator::getNthRegion(Region & aRegion, int n){
   }
 
   // temp array to hold dequeued Regions
-  Region* temp = new Region[n-1];
+  Region* temp;
+  // if 1st highest priority is requested, no need to store any Regions in temp array
+  if (n != 1) {
+    temp = new Region[n-1];
+  }
   int counter = 0;
 
   // dequeues n-1 regions, ending with the nth priority region sitting at ROOTINDEX
@@ -678,7 +682,9 @@ bool Irrigator::getNthRegion(Region & aRegion, int n){
     upHeapifyIrrigator(m_size);
   }
   // delete temp array (this will not delete contents from heap)
-  delete[] temp;
+  if (n != 1) {
+    delete[] temp;
+  }
 
   return true;
 }
@@ -706,7 +712,11 @@ bool Irrigator::setPriorityFn(prifn_t priFn, HEAPTYPE heapType, int n){
   }
 
   // temp array to hold dequeued regions
-  Region* temp = new Region[n-1];
+  Region* temp;
+  // if 1st highest priority is requested, no need to store any Regions in a temp array
+  if (n != 1) {
+    temp = new Region[n-1];
+  }
   int counter = 0;
 
   // dequeues n-1 regions, ending with the nth priority region sitting at ROOTINDEX
@@ -732,7 +742,9 @@ bool Irrigator::setPriorityFn(prifn_t priFn, HEAPTYPE heapType, int n){
     upHeapifyIrrigator(m_size);
   }
 
-  delete[] temp;
+  if (n != 1) {
+    delete[] temp;
+  }
 
   return true;
 }
