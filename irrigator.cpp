@@ -601,7 +601,9 @@ Irrigator::Irrigator(int size){
 }
 
 Irrigator::~Irrigator(){
-  
+  delete[] m_heap;
+  m_capacity = 0;
+  m_size = 0;
 }
 // Should make deep copy of region parameter and add that to queue
 bool Irrigator::addRegion(Region & aRegion){
